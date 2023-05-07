@@ -1,6 +1,9 @@
 SatelliteToolboxGeomagneticField.jl
 ===================================
 
+[![CI](https://github.com/JuliaSpace/SatelliteToolboxGeomagneticField.jl/actions/workflows/ci.yml/badge.svg)](https://github.com/JuliaSpace/SatelliteToolboxGeomagneticField.jl/actions/workflows/ci.yml)
+[![Code Style: Blue](https://img.shields.io/badge/code%20style-blue-4495d1.svg)](https://github.com/invenia/BlueStyle)
+
 This packages contains models to compute the geomagnetic field vector. We currently have two
 models implemented:
 
