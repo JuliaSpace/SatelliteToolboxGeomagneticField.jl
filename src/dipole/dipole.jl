@@ -98,9 +98,7 @@ function _geomagnetic_dipole_coefficients(year::Number)
             end
         end
 
-        if isnothing(id)
-            id = low
-        end
+        isnothing(id) && (id = low)
 
         # Linearly interpolate the values.
         Δt    = year - C[id, 1]

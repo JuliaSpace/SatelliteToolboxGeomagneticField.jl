@@ -228,6 +228,14 @@ end
     @test_throws ArgumentError igrf(2020, R0 + 140e3, π / 4, π / 2, Val(:geocentric); P = P₀, dP = dP₁)
     @test_throws ArgumentError igrf(2020, R0 + 140e3, π / 4, π / 2, Val(:geocentric); P = P₁, dP = dP₀)
     @test_nowarn igrf(2020, R0 + 140e3, π / 4, π / 2, Val(:geocentric); P = P₁, dP = dP₁)
+
+    @test_throws ArgumentError igrf(1899.9, R0 + 140e3, π / 4, π / 2, Val(:geocentric))
+    @test_throws ArgumentError igrf(2030.1, R0 + 140e3, π / 4, π / 2, Val(:geocentric))
+
+    @test_throws ArgumentError igrf(2020, R0 + 140e3, -π / 2 - 0.01, π / 2, Val(:geocentric))
+    @test_throws ArgumentError igrf(2020, R0 + 140e3, +π / 2 + 0.01, π / 2, Val(:geocentric))
+    @test_throws ArgumentError igrf(2020, R0 + 140e3, π / 4, -π - 0.01, Val(:geocentric))
+    @test_throws ArgumentError igrf(2020, R0 + 140e3, π / 4, +π + 0.01, Val(:geocentric))
 end
 
 # Function: igrfd
@@ -425,4 +433,9 @@ end
     @test_throws ArgumentError igrfd(2020, R0 + 140e3, 45, 90, Val(:geocentric); P = P₀, dP = dP₁)
     @test_throws ArgumentError igrfd(2020, R0 + 140e3, 45, 90, Val(:geocentric); P = P₁, dP = dP₀)
     @test_nowarn igrfd(2020, R0 + 140e3, 45, 90, Val(:geocentric); P = P₁, dP = dP₁)
+
+    @test_throws ArgumentError igrfd(2020, R0 + 140e3, -91,   90, Val(:geocentric))
+    @test_throws ArgumentError igrfd(2020, R0 + 140e3, +91,   90, Val(:geocentric))
+    @test_throws ArgumentError igrfd(2020, R0 + 140e3, +45,  181, Val(:geocentric))
+    @test_throws ArgumentError igrfd(2020, R0 + 140e3, +45, -181, Val(:geocentric))
 end

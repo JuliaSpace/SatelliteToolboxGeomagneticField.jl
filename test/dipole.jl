@@ -80,4 +80,17 @@
 
     @test B_e_expected ≈ B_e_result_f32 atol = 1e-1
     @test eltype(B_e_result_f32) === Float32
+
+    # Test Extrapolation
+    # ======================================================================================
+
+    r_e = R0 * (@SVector rand(3))
+
+    B_e_expected = geomagnetic_dipole_field(r_e, 1900)
+    B_e_result   = geomagnetic_dipole_field(r_e, 1890)
+    @test B_e_result == B_e_expected
+
+    B_e_expected = geomagnetic_dipole_field(r_e, 2026)
+    B_e_result   = geomagnetic_dipole_field(r_e, 2025)
+    @test B_e_result == B_e_expected
 end
