@@ -1,0 +1,24 @@
+name = "SatelliteToolboxGeomagneticField"
+uuid = "9fc549ba-b5d7-49a2-b268-8171e5fb6e89"
+authors = ["Ronan Arraes Jardim Chagas <ronisbr@gmail.com>"]
+version = "0.1.0"
+
+[deps]
+LinearAlgebra = "37e2e46d-f89d-539d-b4ee-838fcccc9c8e"
+ReferenceFrameRotations = "74f56ac7-18b3-5285-802d-d4bd4f104033"
+SatelliteToolboxLegendre = "7fa26607-a272-47b2-9aa2-a6c1d419d9d2"
+SatelliteToolboxTransformations = "6b019ec1-7a1e-4f04-96c7-a9db1ca5514d"
+StaticArrays = "90137ffa-7385-5640-81b9-e52037218182"
+
+[compat]
+ReferenceFrameRotations = "3"
+SatelliteToolboxLegendre = "0.1"
+SatelliteToolboxTransformations = "0.1"
+StaticArrays = "1"
+julia = "1.6"
+
+[extras]
+Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
+
+[targets]
+test = ["Test"]
