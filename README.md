@@ -245,4 +245,4 @@ julia> geomag_dipole(r_e, 1986)
 - **[1]** **Alken, P.; Thébault, E.; Beggan, C. D. et al. (2021)**. *International
   Geomagnetic Reference Field: The Thirteenth Generation*. **Earth Planets Space**, v. 73,
   n. 49.
-- **[2]** [](http://wdc.kugi.kyoto-u.ac.jp/poles/polesexp.html)
+- **[2]** [http://wdc.kugi.kyoto-u.ac.jp/poles/polesexp.html](http://wdc.kugi.kyoto-u.ac.jp/poles/polesexp.html)
