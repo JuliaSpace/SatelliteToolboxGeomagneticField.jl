@@ -158,15 +158,6 @@ function igrfd(
 
     T = promote_type(T1, T2, T3) |> float
 
-    # Check if the latitude and longitude are valid.
-    if (λ < -90) || (λ > 90)
-        throw(ArgumentError("The latitude must be between -90° and +90° rad."))
-    end
-
-    if (Ω < -180) || (Ω > 180)
-        throw(ArgumentError("The longitude must be between -180° and +180° rad."))
-    end
-
     return igrf(
         date,
         T(h),
