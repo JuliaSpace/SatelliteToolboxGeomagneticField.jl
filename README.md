@@ -20,7 +20,7 @@ models implemented:
 
 ```julia
 julia> using Pkg
-julia> Pkg.install("SatelliteToolboxGeomagneticField")
+julia> Pkg.add("SatelliteToolboxGeomagneticField")
 ```
 
 ## Usage
