@@ -3,8 +3,7 @@
   <small><i>This package is part of the <a href="https://github.com/JuliaSpace/SatelliteToolbox.jl">SatelliteToolbox.jl</a> ecosystem.</i></small>
 </p>
 
-SatelliteToolboxGeomagneticField.jl
-===================================
+# SatelliteToolboxGeomagneticField.jl
 
 [![CI](https://github.com/JuliaSpace/SatelliteToolboxGeomagneticField.jl/actions/workflows/ci.yml/badge.svg)](https://github.com/JuliaSpace/SatelliteToolboxGeomagneticField.jl/actions/workflows/ci.yml)
 [![codecov](https://codecov.io/gh/JuliaSpace/SatelliteToolboxGeomagneticField.jl/branch/main/graph/badge.svg?token=HW2Y9NA0L5)](https://codecov.io/gh/JuliaSpace/SatelliteToolboxGeomagneticField.jl)
@@ -13,7 +12,8 @@ SatelliteToolboxGeomagneticField.jl
 This packages contains models to compute the geomagnetic field vector. We currently have two
 models implemented:
 
-1. The [International Geomagnetic Reference Field (IGRF) v13](https://www.ngdc.noaa.gov/IAGA/vmod/igrf.html); and
+1. The [International Geomagnetic Reference Field (IGRF)
+   v13](https://www.ngdc.noaa.gov/IAGA/vmod/igrf.html); and
 2. The simplified dipole model.
 
 ## Installation
@@ -32,9 +32,11 @@ We have a native Julia implementation of the [International Geomagnetic Referenc
 be accessed by two functions: `irgf` and `irgfd`.
 
 ```julia
-function igrfd(date::Number, <r, h>::T1, λ::T2, Ω::T3[, R]; kwargs...) where {T1<:Number, T2<:Number, T3<:Number}
+function igrfd(date::Number, <r, h>::Number, λ::Number, Ω::Number[, R]; kwargs...)
 ```
-Compute the geomagnetic field vector [nT] at the date `date` [Year A.D.] and position (`r` or `h`, `λ`, `Ω`).
+
+Compute the geomagnetic field vector [nT] at the date `date` [Year A.D.] and position (`r`
+or `h`, `λ`, `Ω`).
 
 The position representation is defined by `R`. If `R` is `Val(:geocentric)`, the input must
 be **geocentric** coordinates:
@@ -85,7 +87,7 @@ desired location represented in the same input reference (geocentric or geodetic
 that the output type `T` is obtained by promoting `T1`, `T2`, and `T3` to a float.
 
 ``` julia
-function igrf(date::Number, <r, h>::T1, λ::T2, Ω::T3[, R]; kwargs...) where {T1<:Number, T2<:Number, T3<:Number}
+function igrf(date::Number, <r, h>::Number, λ::Number, Ω::Number[, R]; kwargs...)
 ```
 
 Compute the geomagnetic field vector [nT] at the date `date` [Year A.D.] and position (`r`
@@ -218,7 +220,7 @@ Notice that:
 2. The returned vector type is obtained by converting `T` to a float.
 3. The south geomagnetic pole position and dipole moment is obtained by interpolating the
     values provided in **[2]**.
-    
+
 ```julia
 julia> r_e = [0; 0; R0 + 200e3];
 
