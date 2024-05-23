@@ -1,25 +1,19 @@
-# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
+## Description #############################################################################
 #
-# Description
-# ==========================================================================================
+# International Geomagnetic Field Model.
 #
-#   International Geomagnetic Field Model.
+## References ##############################################################################
 #
-# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
+# [1] https://www.ngdc.noaa.gov/IAGA/vmod/igrf.html
+# [2] https://www.ngdc.noaa.gov/IAGA/vmod/igrf12.f
+# [3] https://www.mathworks.com/matlabcentral/fileexchange/34388-international-geomagnetic-reference-field--igrf--model
 #
-# References
-# ==========================================================================================
-#
-#   [1] https://www.ngdc.noaa.gov/IAGA/vmod/igrf.html
-#   [2] https://www.ngdc.noaa.gov/IAGA/vmod/igrf12.f
-#   [3] https://www.mathworks.com/matlabcentral/fileexchange/34388-international-geomagnetic-reference-field--igrf--model
-#
-# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
+############################################################################################
 
 export igrf, igrfd
 
 ############################################################################################
-#                                        Functions
+#                                        Functions                                         #
 ############################################################################################
 
 """
@@ -48,11 +42,13 @@ If `R` is `Val(:geodetic)`, the input must be **geodetic** coordinates:
 If `R` is omitted, it defaults to `Val(:geocentric)`.
 
 !!! warning
+
     We must have `1900 <= date <= 2030`. A warning message is printed for dates greater than
     2025 since the output is not reliable anymore. This message can be suppressed by setting
     the keyword `show_warnings` to `false`.
 
 !!! info
+
     The output vector will be represented in the same reference system selected by the
     parameter `R` (geocentric or geodetic). The Y-axis of the output reference system always
     points East. In case of **geocentric coordinates**, the Z-axis points toward the center
@@ -67,15 +63,18 @@ If `R` is omitted, it defaults to `Val(:geocentric)`.
     geomagnetic field. If it is higher than the available number of coefficients in the IGRF
     matrices, it will be clamped. If it is equal of lower than 0, it will be set to 1.
     (**Default** = 13)
-- `show_warnings::Bool`: Show warnings about the data (**Default** = `true`).
+- `show_warnings::Bool`: Show warnings about the data.
+    (**Default** = `true`)
 - `P::Union{Nothing, AbstractMatrix}`: An optional matrix that must contain at least
     `max_degree + 1 × max_degree + 1` real numbers that will be used to store the Legendre
     coefficients, reducing the allocations. If it is `nothing`, the matrix will be created
     when calling the function.
+    (**Default** = `nothing`)
 - `dP::Union{Nothing, AbstractMatrix}`: An optional matrix that must contain at least
     `max_degree + 1 × max_degree + 1` real numbers that will be used to store the Legendre
     derivative coefficients, reducing the allocations. If it is `nothing`, the matrix will
     be created when calling the function.
+    (**Default** = `nothing`)
 
 # Returns
 
@@ -83,6 +82,7 @@ If `R` is omitted, it defaults to `Val(:geocentric)`.
     same input reference (geocentric or geodetic).
 
 !!! info
+
     The output type `T` is obtained by promoting `T1`, `T2`, and `T3` to a float.
 """
 function igrfd(
@@ -197,11 +197,13 @@ If `R` is `Val(:geodetic)`, the input must be **geodetic** coordinates:
 If `R` is omitted, it defaults to `Val(:geocentric)`.
 
 !!! warning
+
     We must have `1900 <= date <= 2030`. A warning message is printed for dates greater than
     2025 since the output is not reliable anymore. This message can be suppressed by setting
     the keyword `show_warnings` to `false`.
 
 !!! info
+
     The output vector will be represented in the same reference system selected by the
     parameter `R` (geocentric or geodetic). The Y-axis of the output reference system always
     points East. In case of **geocentric coordinates**, the Z-axis points toward the center
@@ -216,15 +218,18 @@ If `R` is omitted, it defaults to `Val(:geocentric)`.
     geomagnetic field. If it is higher than the available number of coefficients in the IGRF
     matrices, it will be clamped. If it is equal of lower than 0, it will be set to 1.
     (**Default** = 13)
-- `show_warnings::Bool`: Show warnings about the data (**Default** = `true`).
+- `show_warnings::Bool`: Show warnings about the data.
+    (**Default** = `true`)
 - `P::Union{Nothing, AbstractMatrix}`: An optional matrix that must contain at least
     `max_degree + 1 × max_degree + 1` real numbers that will be used to store the Legendre
     coefficients, reducing the allocations. If it is `nothing`, the matrix will be created
     when calling the function.
+    (**Default** = `nothing`)
 - `dP::Union{Nothing, AbstractMatrix}`: An optional matrix that must contain at least
     `max_degree + 1 × max_degree + 1` real numbers that will be used to store the Legendre
     derivative coefficients, reducing the allocations. If it is `nothing`, the matrix will
     be created when calling the function.
+    (**Default** = `nothing`)
 
 # Returns
 
@@ -232,6 +237,7 @@ If `R` is omitted, it defaults to `Val(:geocentric)`.
     same input reference (geocentric or geodetic).
 
 !!! info
+
     The output type `T` is obtained by promoting `T1`, `T2`, and `T3` to a float.
 """
 function igrf(
@@ -271,8 +277,7 @@ function igrf(
 
     T = promote_type(T1, T2, T3) |> float
 
-    # Input Verification
-    # ======================================================================================
+    # == Input Verification ================================================================
 
     # Check the data, since this model is valid for years between 1900 and `max_year`.
     if (date < 1900) || (date > _IGRF_LAST_YEAR)
@@ -298,8 +303,7 @@ function igrf(
     # If the `max_degree` is equal or lower than 0, we must clamp it to 1.
     max_degree = max(max_degree, 1)
 
-    # Input Variables Conversion
-    # ======================================================================================
+    # == Input Variables Conversion ========================================================
 
     # Convert latitude / longitude to co-latitude and east-longitude.
     θ = T(π / 2) - T(λ)
@@ -308,8 +312,7 @@ function igrf(
     # The input variable `r` is in [m], but all the algorithm requires it to be in [km].
     r_km = T(r) / 1000
 
-    # Preliminary Setup
-    # ======================================================================================
+    # == Preliminary Setup =================================================================
 
     # Compute the epoch that will be used to obtain the coefficients. This is necessary
     # because the IGRF provides coefficients every 5 years. Between two epochs, those
@@ -356,8 +359,7 @@ function igrf(
         end
     end
 
-    # Geomagnetic potential gradient
-    # ======================================================================================
+    # == Geomagnetic Potential Gradient ====================================================
 
     dVr, dVϕ, dVθ = _igrf_geomagnetic_potential_gradient(
         n_max,
@@ -371,8 +373,7 @@ function igrf(
         dP,
     )
 
-    # Compute the Geomagnetic field vector in the geocentric reference frame
-    # ======================================================================================
+    # == Compute the Geomagnetic Field Vector in the Geocentric Reference Frame ============
 
     x = +dVθ / r_km
     y = (θ == 0) ? -dVϕ / r_km : -dVϕ / (r_km * sin(θ))
@@ -425,7 +426,7 @@ function igrf(
 end
 
 ############################################################################################
-#                                    Private Functions
+#                                    Private Functions                                     #
 ############################################################################################
 
 """
@@ -451,6 +452,7 @@ Compute the geomagnetic potential gradient.
     `n_max + 1 × n_max + 1`.
 
 !!! warning
+
     This is a low-level function. It does not perform any verification related to the
     inputs.
 
@@ -481,8 +483,7 @@ function _igrf_geomagnetic_potential_gradient(
     ratio = a / r_km
     fact  = ratio
 
-    # Initialization of variables
-    # ======================================================================================
+    # == Initialization of Variables =======================================================
 
     dVr = T(0)  # ........................ Derivative of the Geomagnetic potential w.r.t. r.
     dVθ = T(0)  # ........................ Derivative of the Geomagnetic potential w.r.t. θ.
@@ -502,8 +503,7 @@ function _igrf_geomagnetic_potential_gradient(
         aux_dVθ = T(0)
         aux_dVϕ = T(0)
 
-        # Compute the contributions when `m = 0`
-        # ==================================================================================
+        # == Compute the Contributions When `m = 0` ========================================
 
         # Get the coefficients in the epoch and interpolate to the desired time.
         Gnm_e0 = T(G[kg, idx])
@@ -524,8 +524,7 @@ function _igrf_geomagnetic_potential_gradient(
         aux_dVr += -(n + 1) / r_km * Gnm * P[n+1, 1]
         aux_dVθ += Gnm * dP[n+1, 1]
 
-        # Sine and cosine with m = 1
-        # ==================================================================================
+        # == Sine and Cosine with m = 1 ====================================================
         #
         # This values will be used to update recursively `sin(m * ϕ)` and `cos(m * ϕ)`,
         # reducing the computational burden.
@@ -541,21 +540,18 @@ function _igrf_geomagnetic_potential_gradient(
         cos_m_1ϕ = T(1)      # cos( 0 * λ_gc)
         cos_m_2ϕ = +cos_ϕ    # cos(-2 * λ_gc)
 
-        # Other auxiliary variables that depend only on `n`
-        # ==================================================================================
+        # == Other Auxiliary Variables that Depend Only on `n` =============================
 
         fact_dVr = T(n + 1) / r_km
 
-        # Compute the contributions when `m ∈ [1, n]`
-        # ==================================================================================
+        # == Compute the Contributions When `m ∈ [1, n]` ===================================
 
         for m in 1:n
             # Compute recursively `sin(m * ϕ)` and `cos(m * ϕ)`.
             sin_mϕ = 2cos_ϕ * sin_m_1ϕ - sin_m_2ϕ
             cos_mϕ = 2cos_ϕ * cos_m_1ϕ - cos_m_2ϕ
 
-            # Compute the coefficients `G_nm` and `H_nm`
-            # ==============================================================================
+            # == Compute the Coefficients `G_nm` and `H_nm` ================================
 
             # Get the coefficients in the epoch and interpolate to the desired time.
             Gnm_e0 = T(G[kg, idx])
@@ -582,15 +578,13 @@ function _igrf_geomagnetic_potential_gradient(
             GcHs_nm = Gnm * cos_mϕ + Hnm * sin_mϕ
             GsHc_nm = Gnm * sin_mϕ - Hnm * cos_mϕ
 
-            # Compute the contributions for `m`
-            # ==============================================================================
+            # == Compute the Contributions for `m` =========================================
 
             aux_dVr += -fact_dVr * GcHs_nm * P[n+1, m+1]
             aux_dVθ += GcHs_nm * dP[n+1, m+1]
             aux_dVϕ += (θ == 0) ? -m * GsHc_nm * dP[n+1, m+1] : -m * GsHc_nm * P[n+1, m+1]
 
-            # Update the values for the next step
-            # ==============================================================================
+            # == Update the Values for the Next Step =======================================
 
             sin_m_2ϕ = sin_m_1ϕ
             sin_m_1ϕ = sin_mϕ
@@ -598,8 +592,7 @@ function _igrf_geomagnetic_potential_gradient(
             cos_m_1ϕ = cos_mϕ
         end
 
-        # Perform final computations related to the summation in `n`
-        # ==================================================================================
+        # == Perform Final Computations Related to the Summation in `n` ====================
 
         # fact = (a / r)^(n + 1)
         fact *= ratio

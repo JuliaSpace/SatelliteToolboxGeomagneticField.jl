@@ -1,11 +1,8 @@
-# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
+## Description #############################################################################
 #
-# Description
-# ==========================================================================================
+# Tests related to the IGRF model.
 #
-#   Tests related to the IGRF model.
-#
-# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
+############################################################################################
 
 # Load test files.
 #
@@ -17,13 +14,11 @@
 const igrf13_geocentric_test = readdlm("./IGRF13_test_geocentric.txt")
 const igrf13_geodetic_test   = readdlm("./IGRF13_test_geodetic.txt")
 
-# File: ./src/igrf/igrf.jl
-# ==========================================================================================
+# == File: ./src/igrf/igrf.jl ==============================================================
 
-# Function: igrf
-# ------------------------------------------------------------------------------------------
+# -- Function: igrf ------------------------------------------------------------------------
 
-@testset "Function igrf" begin
+@testset "Function: igrf" begin
     # Auxiliary variables to use the version without allocations.
     P  = Matrix{Float64}(undef, 14, 14)
     dP = similar(P)
@@ -112,11 +107,9 @@ const igrf13_geodetic_test   = readdlm("./IGRF13_test_geodetic.txt")
         @test Ba == Bn
     end
 
-    # Reduced Degree
-    # ======================================================================================
+    # == Reduced Degree ====================================================================
 
-    # Geocentric
-    # --------------------------------------------------------------------------------------
+    # -- Geocentric ------------------------------------------------------------------------
 
     # If `max_degree` is equal to or lower than 0, the results must be the same as if
     # `max_degree` is 1.
@@ -152,8 +145,7 @@ const igrf13_geodetic_test   = readdlm("./IGRF13_test_geodetic.txt")
 
     @test B1 == Bref
 
-    # Geodetic
-    # --------------------------------------------------------------------------------------
+    # -- Geodetic --------------------------------------------------------------------------
 
     # If `max_degree` is equal or lower than 0, the results must be the same as if
     # `max_degree` is 1.
@@ -189,8 +181,7 @@ const igrf13_geodetic_test   = readdlm("./IGRF13_test_geodetic.txt")
 
     @test B1 == Bref
 
-    # Float32
-    # ======================================================================================
+    # == Float32 ===========================================================================
 
     Bf32 = igrf(2020.4452, 6515f3, 0.45f0, -1.34f0)
     @test eltype(Bf32) === Float32
@@ -199,7 +190,7 @@ const igrf13_geodetic_test   = readdlm("./IGRF13_test_geodetic.txt")
     @test eltype(Bf32) === Float32
 end
 
-@testset "Function igrf [Issues]" begin
+@testset "Function: igrf [Issues]" begin
     # Calculation close to the geographic pole.
     B = igrf(2019, 7150e3, π / 2 - 1e-15, 0.55)
     @test B[1] ≈ 907.752507827486
@@ -212,7 +203,7 @@ end
     @test B[3] ≈ 41139.95114358636
 end
 
-@testset "Function igrf [ERRORS]" begin
+@testset "Function: igrf [ERRORS]" begin
     P₀  = zeros(10, 10)
     dP₀ = zeros(10, 10)
     P₁  = zeros(15, 15)
@@ -238,10 +229,9 @@ end
     @test_throws ArgumentError igrf(2020, R0 + 140e3, π / 4, +π + 0.01, Val(:geocentric))
 end
 
-# Function: igrfd
-# ------------------------------------------------------------------------------------------
+# -- Function: igrfd -----------------------------------------------------------------------
 
-@testset "Function igrfd" begin
+@testset "Function: igrfd" begin
     # Auxiliary variables to use the version without allocations.
     P  = Matrix{Float64}(undef, 14, 14)
     dP = similar(P)
@@ -330,11 +320,9 @@ end
         @test Ba == Bn
     end
 
-    # Reduced Degree
-    # ======================================================================================
+    # == Reduced Degree ====================================================================
 
-    # Geocentric
-    # --------------------------------------------------------------------------------------
+    # -- Geocentric ------------------------------------------------------------------------
 
     # If `max_degree` is equal to or lower than 0, the results must be the same as if
     # `max_degree` is 1.
@@ -370,8 +358,7 @@ end
 
     @test B1 == Bref
 
-    # Geodetic
-    # --------------------------------------------------------------------------------------
+    # -- Geodetic --------------------------------------------------------------------------
 
     # If `max_degree` is equal or lower than 0, the results must be the same as if
     # `max_degree` is 1.
@@ -407,8 +394,7 @@ end
 
     @test B1 == Bref
 
-    # Float32
-    # ======================================================================================
+    # == Float32 ===========================================================================
 
     Bf32 = igrfd(2020.4452, 6515f3, -25.0f0, -45.0f0)
     @test eltype(Bf32) === Float32
@@ -417,7 +403,7 @@ end
     @test eltype(Bf32) === Float32
 end
 
-@testset "Function igrfd [ERRORS]" begin
+@testset "Function: igrfd [ERRORS]" begin
     P₀  = zeros(10, 10)
     dP₀ = zeros(10, 10)
     P₁  = zeros(15, 15)

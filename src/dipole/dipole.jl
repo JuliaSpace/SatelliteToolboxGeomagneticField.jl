@@ -1,18 +1,12 @@
-# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
+## Description #############################################################################
 #
-# Description
-# ==========================================================================================
+# Dipole model for the Earth geomagnetic field.
 #
-#   Dipole model for the Earth geomagnetic field.
+## References ##############################################################################
 #
-# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
+# [1] http://helios.fmi.fi/~juusolal/geomagnetism/Lectures/Chapter3_dipole.pdf
 #
-# References
-# ==========================================================================================
-#
-#   [1] http://helios.fmi.fi/~juusolal/geomagnetism/Lectures/Chapter3_dipole.pdf
-#
-# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
+############################################################################################
 
 export geomagnetic_dipole_field
 
@@ -58,7 +52,7 @@ function geomagnetic_dipole_field(r_e::AbstractVector{T}, year::Number = 2020) w
 end
 
 ############################################################################################
-#                                    Private Functions
+#                                    Private Functions                                     #
 ############################################################################################
 
 # Obtain the geomagnetic dipole coefficients (latitude and longitude of the south
@@ -108,10 +102,10 @@ function _geomagnetic_dipole_coefficients(year::Number)
         lon₀  = C[id, 3]
         m₀    = C[id, 4]
 
-        Δyear = C[id+1, 1] - year₀
-        Δlat  = C[id+1, 2] - lat₀
-        Δlon  = C[id+1, 3] - lon₀
-        Δm    = C[id+1, 4] - m₀
+        Δyear = C[id + 1, 1] - year₀
+        Δlat  = C[id + 1, 2] - lat₀
+        Δlon  = C[id + 1, 3] - lon₀
+        Δm    = C[id + 1, 4] - m₀
 
         lat   = lat₀ + Δlat / Δyear * Δt
         lon   = lon₀ + Δlon / Δyear * Δt

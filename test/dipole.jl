@@ -1,30 +1,21 @@
-# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
+## Description #############################################################################
 #
-# Description
-# ==========================================================================================
+# Tests related to the simplified dipole model.
 #
-#   Tests related to the simplified dipole model.
+## References ##############################################################################
 #
-# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
+# [1] http://helios.fmi.fi/~juusolal/geomagnetism/Lectures/Chapter3_dipole.pdf
 #
-# References
-# ==========================================================================================
-#
-#   [1] http://helios.fmi.fi/~juusolal/geomagnetism/Lectures/Chapter3_dipole.pdf
-#
-# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
+############################################################################################
 
-# File: ./src/dipole/dipole.jl
-# ==========================================================================================
+# == File: ./src/dipole/dipole.jl ==========================================================
 
-# Function: geomagnetic_dipole_field
-# ------------------------------------------------------------------------------------------
+# -- Function: geomagnetic_dipole_field ----------------------------------------------------
 
-@testset "Function geomagnetic_dipole_field" begin
+@testset "Function: geomagnetic_dipole_field" begin
     R0 = 6378.137e3
 
-    # Test 1
-    # ======================================================================================
+    # == Test 1 ============================================================================
     #
     # Position aligned with the dipole moment vector.
 
@@ -60,8 +51,7 @@
     @test B_e_expected ≈ B_e_result_f32 atol = 1e-1
     @test eltype(B_e_result_f32) === Float32
 
-    # Test 2
-    # ======================================================================================
+    # == Test 2 ============================================================================
     #
     # Position at the magnetic Equator, which must have half the magnitude of that of the
     # test 1.
@@ -81,8 +71,7 @@
     @test B_e_expected ≈ B_e_result_f32 atol = 1e-1
     @test eltype(B_e_result_f32) === Float32
 
-    # Test Extrapolation
-    # ======================================================================================
+    # == Test Extrapolation ================================================================
 
     r_e = R0 * (@SVector rand(3))
 

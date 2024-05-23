@@ -1,18 +1,14 @@
-# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
+## Description #############################################################################
 #
-# Description
+# Coefficients for the IGRF to be used in the function `igrf`.
 #
-#   Coefficients for the IGRF to be used in the function `igrf`.
+# These values were obtained from the official website [1].
 #
-#   This values were obtained from the official website [1].
+## References ##############################################################################
 #
-# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
+# [1] https://www.ngdc.noaa.gov/IAGA/vmod/coeffs/igrf13coeffs.txt
 #
-# References
-#
-#   [1] https://www.ngdc.noaa.gov/IAGA/vmod/coeffs/igrf13coeffs.txt
-#
-# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
+############################################################################################
 
 # IGRF reference radius.
 const _IGRF_A = 6371.2
