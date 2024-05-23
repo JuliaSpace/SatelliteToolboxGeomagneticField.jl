@@ -23,4 +23,3 @@ Version 0.1.0
 [badge-enhancement]: https://img.shields.io/badge/Enhancement-blue.svg
 [badge-bugfix]: https://img.shields.io/badge/Bugfix-purple.svg
 [badge-info]: https://img.shields.io/badge/Info-gray.svg
-
