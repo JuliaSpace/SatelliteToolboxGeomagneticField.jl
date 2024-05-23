@@ -1,6 +1,11 @@
 SatelliteToolboxGeomagneticField.jl Changelog
 =============================================
 
+Version 0.1.2
+-------------
+
+- ![Enhancement][badge-enhancement] Minor source-code updates.
+
 Version 0.1.1
 -------------
 
