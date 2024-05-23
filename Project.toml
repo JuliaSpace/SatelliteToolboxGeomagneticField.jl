@@ -13,10 +13,13 @@ SatelliteToolboxTransformations = "6b019ec1-7a1e-4f04-96c7-a9db1ca5514d"
 StaticArrays = "90137ffa-7385-5640-81b9-e52037218182"
 
 [compat]
+DelimitedFiles = "1.6"
+LinearAlgebra = "1.6"
 ReferenceFrameRotations = "3"
 SatelliteToolboxLegendre = "1"
 SatelliteToolboxTransformations = "0.1"
 StaticArrays = "1"
+Test = "1.6"
 julia = "1.6"
 
 [extras]
