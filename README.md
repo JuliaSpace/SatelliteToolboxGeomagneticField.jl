@@ -43,14 +43,14 @@ The position representation is defined by `R`. If `R` is `Val(:geocentric)`, the
 be **geocentric** coordinates:
 
 1. Distance from the Earth center `r` [m];
-2. Geocentric latitude `λ` ∈ (-90°, +90°); and
-3. Geocentric longitude `Ω` ∈ (-180°, +180°).
+2. Geocentric latitude `λ` ∈ (-π/2°, +π/2°); and
+3. Geocentric longitude `Ω` ∈ (-π°, +π°).
 
 If `R` is `Val(:geodetic)`, the input must be **geodetic** coordinates:
 
-1 Altitude above the reference ellipsoid `h` (WGS-84) [m];
-2. Geodetic latitude `λ` ∈ (-90°, +90°); and
-3. Geodetic longitude `Ω` ∈ (-180°, +180°).
+1. Altitude above the reference ellipsoid `h` (WGS-84) [m];
+2. Geodetic latitude `λ` ∈ (-π/2°, +π/2°); and
+3. Geodetic longitude `Ω` ∈ (-π°, +π°).
 
 If `R` is omitted, it defaults to `Val(:geocentric)`.
 
@@ -60,12 +60,12 @@ If `R` is omitted, it defaults to `Val(:geocentric)`.
 > the keyword `show_warnings` to `false`.
 
 > **Note**
-> The output vector will be represented in the same reference system selected by the
-> parameter `R` (geocentric or geodetic). The Y-axis of the output reference system always
-> points East. In case of **geocentric coordinates**, the Z-axis points toward the center of
-> Earth and the X-axis completes a right-handed coordinate system. In case of **geodetic
-> coordinates**, the X-axis is tangent to the ellipsoid at the selected location and points
-> toward North, whereas the Z-axis completes a right-hand coordinate system.
+> The output vector will be represented in a North-East-Down (NED) reference system selected
+> by the parameter `R` (geocentric or geodetic). The Y-axis of the output reference system
+> always points East. In case of **geocentric coordinates**, the Z-axis points toward the
+> center of Earth and the X-axis completes a right-handed coordinate system. In case of
+> **geodetic coordinates**, the X-axis is tangent to the ellipsoid at the selected location
+> and points toward North, whereas the Z-axis completes a right-hand coordinate system.
 
 The following keywords are available:
 
@@ -98,7 +98,7 @@ The position representation is defined by `R`. If `R` is `Val(:geocentric)`, the
 be **geocentric** coordinates:
 
 1. Distance from the Earth center `r` [m];
-2. Geocentric latitude `λ` ∈ (-π / 2, +π / 2) [rad]; and
+2. Geocentric latitude `λ` ∈ (-π/2, +π/2) [rad]; and
 3. Geocentric longitude `Ω` ∈ (-π, +π) [rad].
 
 If `R` is `Val(:geodetic)`, the input must be **geodetic** coordinates:
@@ -114,13 +114,12 @@ If `R` is omitted, it defaults to `Val(:geocentric)`.
 > 2025 since the output is not reliable anymore. This message can be suppressed by setting
 > the keyword `show_warnings` to `false`.
 
-> **Note**
-> The output vector will be represented in the same reference system selected by the
-> parameter `R` (geocentric or geodetic). The Y-axis of the output reference system always
-> points East. In case of **geocentric coordinates**, the Z-axis points toward the center of
-> Earth and the X-axis completes a right-handed coordinate system. In case of **geodetic
-> coordinates**, the X-axis is tangent to the ellipsoid at the selected location and points
-> toward North, whereas the Z-axis completes a right-hand coordinate system.
+> **Note** The output vector will be represented in a North-East-Down (NED) reference system
+> selected by the parameter `R` (geocentric or geodetic). The Y-axis of the output reference
+> system always points East. In case of **geocentric coordinates**, the Z-axis points toward
+> the center of Earth and the X-axis completes a right-handed coordinate system. In case of
+> **geodetic coordinates**, the X-axis is tangent to the ellipsoid at the selected location
+> and points toward North, whereas the Z-axis completes a right-hand coordinate system.
 
 The following keywords are available:
 
@@ -138,9 +137,9 @@ The following keywords are available:
     derivative coefficients, reducing the allocations. If it is `nothing`, the matrix will
     be created when calling the function.
 
-This function returns a `SVector{3, T}`, which is the geomagnetic field vector [nT] at the
-desired location represented in the same input reference (geocentric or geodetic). Notice
-that the output type `T` is obtained by promoting `T1`, `T2`, and `T3` to a float.
+This function returns a `SVector{3, T}`, which is the geomagnetic field vector [nT] in either
+a geocentric or geodetic NED frame determined by the input reference value (`R`). Notice that
+the output type `T` is obtained by promoting `T1`, `T2`, and `T3` to a float.
 
 ```julia
 julia> igrf(2017.12313, 640e3, 50 * pi / 180, 25 * pi / 180, Val(:geodetic))
