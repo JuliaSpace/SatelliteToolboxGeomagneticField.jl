@@ -1,6 +1,11 @@
 SatelliteToolboxGeomagneticField.jl Changelog
 =============================================
 
+Verison 1.0.1
+-------------
+
+- ![Feature][badge-feature] Update IGRF to v14. (Issue [#3][gh-issue-3])
+
 Version 1.0.0
 -------------
 
@@ -31,3 +36,5 @@ Version 0.1.0
 [badge-enhancement]: https://img.shields.io/badge/Enhancement-blue.svg
 [badge-bugfix]: https://img.shields.io/badge/Bugfix-purple.svg
 [badge-info]: https://img.shields.io/badge/Info-gray.svg
+
+[gh-issue-3]: https://github.com/JuliaSpace/SatelliteToolboxGeomagneticField.jl/issues/3
