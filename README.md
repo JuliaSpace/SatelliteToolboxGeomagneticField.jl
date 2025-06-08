@@ -29,7 +29,7 @@ julia> Pkg.add("SatelliteToolboxGeomagneticField")
 ### IGRF
 
 We have a native Julia implementation of the [International Geomagnetic Reference Field
-(IGRF) v13](https://www.ngdc.noaa.gov/IAGA/vmod/igrf.html) based on **[1]**. This mode can
+(IGRF) v14](https://www.ngdc.noaa.gov/IAGA/vmod/igrf.html) based on **[1]**. This mode can
 be accessed by two functions: `irgf` and `irgfd`.
 
 ```julia
@@ -43,20 +43,20 @@ The position representation is defined by `R`. If `R` is `Val(:geocentric)`, the
 be **geocentric** coordinates:
 
 1. Distance from the Earth center `r` [m];
-2. Geocentric latitude `λ` ∈ (-π/2°, +π/2°); and
-3. Geocentric longitude `Ω` ∈ (-π°, +π°).
+2. Geocentric latitude `λ` ∈ (-90°, +90°); and
+3. Geocentric longitude `Ω` ∈ (-180°, +180°).
 
 If `R` is `Val(:geodetic)`, the input must be **geodetic** coordinates:
 
 1. Altitude above the reference ellipsoid `h` (WGS-84) [m];
-2. Geodetic latitude `λ` ∈ (-π/2°, +π/2°); and
-3. Geodetic longitude `Ω` ∈ (-π°, +π°).
+2. Geodetic latitude `λ` ∈ (-90°, +90°); and
+3. Geodetic longitude `Ω` ∈ (-180°, +180°).
 
 If `R` is omitted, it defaults to `Val(:geocentric)`.
 
 > **Warning**
-> We must have `1900 <= date <= 2030`. A warning message is printed for dates greater than
-> 2025 since the output is not reliable anymore. This message can be suppressed by setting
+> We must have `1900 <= date <= 2035`. A warning message is printed for dates greater than
+> 2030 since the output is not reliable anymore. This message can be suppressed by setting
 > the keyword `show_warnings` to `false`.
 
 > **Note**
@@ -98,20 +98,20 @@ The position representation is defined by `R`. If `R` is `Val(:geocentric)`, the
 be **geocentric** coordinates:
 
 1. Distance from the Earth center `r` [m];
-2. Geocentric latitude `λ` ∈ (-π/2, +π/2) [rad]; and
+2. Geocentric latitude `λ` ∈ (-π / 2, +π / 2) [rad]; and
 3. Geocentric longitude `Ω` ∈ (-π, +π) [rad].
 
 If `R` is `Val(:geodetic)`, the input must be **geodetic** coordinates:
 
 1. Altitude above the reference ellipsoid `h` (WGS-84) \\[m];
-2. Geodetic latitude `λ` ∈ (-π/2, +π/2) [rad]; and
+2. Geodetic latitude `λ` ∈ (-π / 2, +π / 2) [rad]; and
 3. Geodetic longitude `Ω` ∈ (-π, +π) [rad].
 
 If `R` is omitted, it defaults to `Val(:geocentric)`.
 
 > **Warning**
-> We must have `1900 <= date <= 2030`. A warning message is printed for dates greater than
-> 2025 since the output is not reliable anymore. This message can be suppressed by setting
+> We must have `1900 <= date <= 2035`. A warning message is printed for dates greater than
+> 2030 since the output is not reliable anymore. This message can be suppressed by setting
 > the keyword `show_warnings` to `false`.
 
 > **Note** The output vector will be represented in a North-East-Down (NED) reference system
@@ -143,58 +143,58 @@ the output type `T` is obtained by promoting `T1`, `T2`, and `T3` to a float.
 
 ```julia
 julia> igrf(2017.12313, 640e3, 50 * pi / 180, 25 * pi / 180, Val(:geodetic))
-3-element SVector{3, Float64} with indices SOneTo(3):
- 15365.787505205588
-  1274.9958640696996
- 34201.2182033379
+3-element StaticArraysCore.SVector{3, Float64} with indices SOneTo(3):
+ 15365.317549816937
+  1274.4599656247276
+ 34200.321000410804
 
 julia> igrfd(2017.12313, 640e3, 50, 25, Val(:geodetic))
-3-element SVector{3, Float64} with indices SOneTo(3):
- 15365.787505205588
-  1274.9958640696996
- 34201.2182033379
+3-element StaticArraysCore.SVector{3, Float64} with indices SOneTo(3):
+ 15365.317549816937
+  1274.4599656247276
+ 34200.321000410804
 
 julia> igrf(2017.12313, 6371e3 + 640e3, 50 * pi / 180, 25 * pi / 180, Val(:geocentric))
-3-element SVector{3, Float64} with indices SOneTo(3):
- 15165.486702524944
-  1269.7264334427584
- 34243.04928373083
+3-element StaticArraysCore.SVector{3, Float64} with indices SOneTo(3):
+ 15165.0261597832
+  1269.1937290447647
+ 34242.14698863755
 
 julia> igrfd(2017.12313, 6371e3 + 640e3, 50, 25, Val(:geocentric))
-3-element SVector{3, Float64} with indices SOneTo(3):
- 15165.486702524944
-  1269.7264334427584
- 34243.04928373083
+3-element StaticArraysCore.SVector{3, Float64} with indices SOneTo(3):
+ 15165.0261597832
+  1269.1937290447647
+ 34242.14698863755
 ```
 
 ```julia
-julia> igrf(2026, 6371e3 + 640e3, 50 * pi/180, 25 * pi/180)
-┌ Warning: The magnetic field computed with this IGRF version may be of reduced accuracy for years greater than 2025.
-└ @ SatelliteToolboxGeomagneticField ~/tmp/SatelliteToolboxGeomagneticField/src/igrf/igrf.jl:301
-3-element SVector{3, Float64} with indices SOneTo(3):
- 15118.591511098812
-  1588.129544718569
- 34668.84185460438
+julia> igrf(2031, 6371e3 + 640e3, 50 * pi/180, 25 * pi/180)
+┌ Warning: The magnetic field computed with this IGRF version may be of reduced accuracy for years greater than 2030.
+└ @ SatelliteToolboxGeomagneticField ~/.julia/dev/SatelliteToolboxGeomagneticField/src/igrf/igrf.jl:300
+3-element StaticArraysCore.SVector{3, Float64} with indices SOneTo(3):
+ 15121.462463886119
+  1653.8244319548928
+ 34799.38328175517
 
-julia> igrfd(2026, 6371e3 + 640e3, 50, 25)
-┌ Warning: The magnetic field computed with this IGRF version may be of reduced accuracy for years greater than 2025.
-└ @ SatelliteToolboxGeomagneticField ~/tmp/SatelliteToolboxGeomagneticField/src/igrf/igrf.jl:301
-3-element SVector{3, Float64} with indices SOneTo(3):
- 15118.591511098812
-  1588.129544718569
- 34668.84185460438
+julia> igrfd(2031, 6371e3 + 640e3, 50, 25)
+┌ Warning: The magnetic field computed with this IGRF version may be of reduced accuracy for years greater than 2030.
+└ @ SatelliteToolboxGeomagneticField ~/.julia/dev/SatelliteToolboxGeomagneticField/src/igrf/igrf.jl:300
+3-element StaticArraysCore.SVector{3, Float64} with indices SOneTo(3):
+ 15121.462463886119
+  1653.8244319548928
+ 34799.38328175517
 
-julia> igrf(2026, 6371e3 + 640e3, 50 * pi / 180, 25 * pi / 180; show_warnings = false)
-3-element SVector{3, Float64} with indices SOneTo(3):
- 15118.591511098812
-  1588.129544718569
- 34668.84185460438
+julia> igrf(2031, 6371e3 + 640e3, 50 * pi / 180, 25 * pi / 180; show_warnings = false)
+3-element StaticArraysCore.SVector{3, Float64} with indices SOneTo(3):
+ 15121.462463886119
+  1653.8244319548928
+ 34799.38328175517
 
-julia> igrfd(2026, 6371e3+640e3, 50, 25; show_warnings = false)
-3-element SVector{3, Float64} with indices SOneTo(3):
- 15118.591511098812
-  1588.129544718569
- 34668.84185460438
+julia> igrfd(2031, 6371e3+640e3, 50, 25; show_warnings = false)
+3-element StaticArraysCore.SVector{3, Float64} with indices SOneTo(3):
+ 15121.462463886119
+  1653.8244319548928
+ 34799.38328175517
 ```
 
 ### Simplified dipole model
