@@ -1,7 +1,7 @@
 SatelliteToolboxGeomagneticField.jl Changelog
 =============================================
 
-Verison 1.0.1
+Verison 1.1.0
 -------------
 
 - ![Feature][badge-feature] Update IGRF to v14. (Issue [#3][gh-issue-3])
