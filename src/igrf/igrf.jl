@@ -21,7 +21,7 @@ export igrf, igrfd
 
 **IGRF Model**
 
-*Current version: v13*
+*Current version: v14*
 
 Compute the geomagnetic field vector [nT] at the date `date` [Year A.D.] and position (`r`
 or `h`, `λ`, `Ω`).
@@ -43,8 +43,8 @@ If `R` is omitted, it defaults to `Val(:geocentric)`.
 
 !!! warning
 
-    We must have `1900 <= date <= 2030`. A warning message is printed for dates greater than
-    2025 since the output is not reliable anymore. This message can be suppressed by setting
+    We must have `1900 <= date <= 2035`. A warning message is printed for dates greater than
+    2030 since the output is not reliable anymore. This message can be suppressed by setting
     the keyword `show_warnings` to `false`.
 
 !!! info
@@ -176,7 +176,7 @@ end
 
 **IGRF Model**
 
-*Current version: v13*
+*Current version: v14*
 
 Compute the geomagnetic field vector [nT] at the date `date` [Year A.D.] and position (`r`
 or `h`, `λ`, `Ω`).
@@ -198,8 +198,8 @@ If `R` is omitted, it defaults to `Val(:geocentric)`.
 
 !!! warning
 
-    We must have `1900 <= date <= 2030`. A warning message is printed for dates greater than
-    2025 since the output is not reliable anymore. This message can be suppressed by setting
+    We must have `1900 <= date <= 2035`. A warning message is printed for dates greater than
+    2030 since the output is not reliable anymore. This message can be suppressed by setting
     the keyword `show_warnings` to `false`.
 
 !!! info
