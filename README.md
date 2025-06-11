@@ -14,7 +14,7 @@ This packages contains models to compute the geomagnetic field vector. We curren
 models implemented:
 
 1. The [International Geomagnetic Reference Field (IGRF)
-   v13](https://www.ngdc.noaa.gov/IAGA/vmod/igrf.html); and
+   v14](https://www.ncei.noaa.gov/products/international-geomagnetic-reference-field); and
 2. The simplified dipole model.
 
 ## Installation
@@ -29,8 +29,8 @@ julia> Pkg.add("SatelliteToolboxGeomagneticField")
 ### IGRF
 
 We have a native Julia implementation of the [International Geomagnetic Reference Field
-(IGRF) v14](https://www.ngdc.noaa.gov/IAGA/vmod/igrf.html) based on **[1]**. This mode can
-be accessed by two functions: `irgf` and `irgfd`.
+(IGRF) v14](https://www.ncei.noaa.gov/products/international-geomagnetic-reference-field)
+based on **[1]**. This mode can be accessed by two functions: `igrf` and `igrfd`.
 
 ```julia
 function igrfd(date::Number, <r, h>::Number, λ::Number, Ω::Number[, R]; kwargs...)
