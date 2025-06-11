@@ -1,6 +1,12 @@
 SatelliteToolboxGeomagneticField.jl Changelog
 =============================================
 
+Version 1.1.1
+-------------
+
+- ![Bugfix][badge-bugfix] The coefficients for the dipole model were not updated given the
+  new IGRF v14 model.
+
 Verison 1.1.0
 -------------
 
