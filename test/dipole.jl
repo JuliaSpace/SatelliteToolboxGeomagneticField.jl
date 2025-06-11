@@ -79,7 +79,7 @@
     B_e_result   = geomagnetic_dipole_field(r_e, 1890)
     @test B_e_result == B_e_expected
 
-    B_e_expected = geomagnetic_dipole_field(r_e, 2026)
-    B_e_result   = geomagnetic_dipole_field(r_e, 2025)
+    B_e_expected = geomagnetic_dipole_field(r_e, 2031)
+    B_e_result   = geomagnetic_dipole_field(r_e, 2030)
     @test B_e_result == B_e_expected
 end
