@@ -6,6 +6,8 @@ using SatelliteToolboxLegendre
 using SatelliteToolboxTransformations
 using StaticArrays
 
+import SatelliteToolboxBase: LowerTriangularStorage, RowMajor
+
 ############################################################################################
 #                                        Constants                                         #
 ############################################################################################

@@ -334,7 +334,7 @@ function igrf(
 
     # Check if the matrices related to Legendre must be computed.
     if isnothing(P)
-        P = Matrix{T}(undef, n_max + 1, n_max + 1)
+        P = LowerTriangularStorage{RowMajor, T}(n_max + 1)
 
     else
         # If the user passed a matrix, we must check if there are enough space to store the
@@ -347,7 +347,7 @@ function igrf(
     end
 
     if isnothing(dP)
-        dP = Matrix{T}(undef, n_max + 1, n_max + 1)
+        dP = LowerTriangularStorage{RowMajor, T}(n_max + 1)
 
     else
         # If the user passed a matrix, we must check if there are enough space to store the
@@ -355,7 +355,7 @@ function igrf(
         rows, cols = size(dP)
 
         if (rows < n_max + 1) || (cols < n_max + 1)
-            throw(ArgumentError("Matrix `P` must have at least $(n_max + 1) rows and columns."))
+            throw(ArgumentError("Matrix `dP` must have at least $(n_max + 1) rows and columns."))
         end
     end
 
@@ -512,17 +512,17 @@ function _igrf_geomagnetic_potential_gradient(
         # last column of the coefficients matrices that contains the expected
         # time-derivative.
         if !extrapolate
-            Gnm_e1 = T(G[kg, idx+1])
+            Gnm_e1 = T(G[kg, idx + 1])
             ΔG     = (Gnm_e1 - Gnm_e0) / T(5)
         else
-            ΔG = T(G[kg,end])
+            ΔG = T(G[kg, end])
         end
 
         Gnm  = Gnm_e0 + ΔG * Δt
         kg  += 1
 
-        aux_dVr += -(n + 1) / r_km * Gnm * P[n+1, 1]
-        aux_dVθ += Gnm * dP[n+1, 1]
+        aux_dVr += -(n + 1) / r_km * Gnm * P[n + 1, 1]
+        aux_dVθ += Gnm * dP[n + 1, 1]
 
         # == Sine and Cosine with m = 1 ====================================================
         #
@@ -561,8 +561,8 @@ function _igrf_geomagnetic_potential_gradient(
             # the last column of the coefficients matrices that contains the expected
             # time-derivative.
             if !extrapolate
-                Gnm_e1 = T(G[kg, idx+1])
-                Hnm_e1 = T(H[kh, idx+1])
+                Gnm_e1 = T(G[kg, idx + 1])
+                Hnm_e1 = T(H[kh, idx + 1])
                 ΔG     = (Gnm_e1 - Gnm_e0) / T(5)
                 ΔH     = (Hnm_e1 - Hnm_e0) / T(5)
             else
@@ -580,9 +580,12 @@ function _igrf_geomagnetic_potential_gradient(
 
             # == Compute the Contributions for `m` =========================================
 
-            aux_dVr += -fact_dVr * GcHs_nm * P[n+1, m+1]
-            aux_dVθ += GcHs_nm * dP[n+1, m+1]
-            aux_dVϕ += (θ == 0) ? -m * GsHc_nm * dP[n+1, m+1] : -m * GsHc_nm * P[n+1, m+1]
+            P_nm  =  P[n + 1, m + 1]
+            dP_nm = dP[n + 1, m + 1]
+
+            aux_dVr += -fact_dVr * GcHs_nm * P_nm
+            aux_dVθ += GcHs_nm * dP_nm
+            aux_dVϕ += (θ == 0) ? -m * GsHc_nm * dP_nm : -m * GsHc_nm * P_nm
 
             # == Update the Values for the Next Step =======================================
 
