@@ -1,13 +1,21 @@
 SatelliteToolboxGeomagneticField.jl Changelog
 =============================================
 
+Version 1.2.0
+-------------
+
+- ![Enhancement][badge-enhancement] The IGRF algorithm uses by default the
+  `LowerTriangularStorage` from SatelliteToolboxBase.jl for the matrices `P` and `dP` if
+  they are not provided. This reduces the memory footprint by half without a noticeable
+  impact on performance.
+
 Version 1.1.1
 -------------
 
 - ![Bugfix][badge-bugfix] The coefficients for the dipole model were not updated given the
   new IGRF v14 model.
 
-Verison 1.1.0
+Version 1.1.0
 -------------
 
 - ![Feature][badge-feature] Update IGRF to v14. (Issue [#3][gh-issue-3])
