@@ -13,8 +13,16 @@ SatelliteToolboxLegendre = "7fa26607-a272-47b2-9aa2-a6c1d419d9d2"
 SatelliteToolboxTransformations = "6b019ec1-7a1e-4f04-96c7-a9db1ca5514d"
 StaticArrays = "90137ffa-7385-5640-81b9-e52037218182"
 
+[weakdeps]
+ForwardDiff = "f6369f11-7733-5829-9624-2563aa707210"
+Zygote = "e88e6eb3-aa80-5325-afca-941959d7151f"
+
+[extensions]
+SatelliteToolboxGeomagneticModelsZygoteExt = ["ForwardDiff", "Zygote"]
+
 [compat]
 DelimitedFiles = "1.9"
+ForwardDiff = "1"
 LinearAlgebra = "1.10"
 ReferenceFrameRotations = "3"
 SatelliteToolboxBase = "1.1"
@@ -22,6 +30,7 @@ SatelliteToolboxLegendre = "1"
 SatelliteToolboxTransformations = "1"
 StaticArrays = "1"
 Test = "1.10"
+Zygote = "0.7"
 julia = "1.10"
 
 [extras]

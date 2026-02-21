@@ -92,9 +92,10 @@ function igrfd(
     Ω::Number;
     max_degree::Int = _IGRF_MAX_DEGREE,
     show_warnings::Bool = true,
+    verbosity::Val{verbose} = Val(true),
     P::Union{Nothing, AbstractMatrix} = nothing,
     dP::Union{Nothing, AbstractMatrix} = nothing
-)
+) where {verbose}
     return igrfd(
         date,
         r,
@@ -103,6 +104,7 @@ function igrfd(
         Val(:geocentric);
         max_degree = max_degree,
         show_warnings = show_warnings,
+        verbosity = verbosity,
         P = P,
         dP = dP
     )
@@ -116,9 +118,10 @@ function igrfd(
     ::Val{:geocentric};
     max_degree::Int = _IGRF_MAX_DEGREE,
     show_warnings::Bool = true,
+    verbosity::Val{verbose} = Val(true),
     P::Union{Nothing, AbstractMatrix} = nothing,
     dP::Union{Nothing, AbstractMatrix} = nothing
-) where {T1<:Number, T2<:Number, T3<:Number}
+) where {T1<:Number, T2<:Number, T3<:Number, verbose}
 
     T = promote_type(T1, T2, T3) |> float
 
@@ -139,6 +142,7 @@ function igrfd(
         Val(:geocentric);
         max_degree = max_degree,
         show_warnings = show_warnings,
+        verbosity = verbosity,
         P = P,
         dP = dP
     )
@@ -152,9 +156,10 @@ function igrfd(
     ::Val{:geodetic};
     max_degree::Int = _IGRF_MAX_DEGREE,
     show_warnings::Bool = true,
+    verbosity::Val{verbose} = Val(true),
     P::Union{Nothing, AbstractMatrix} = nothing,
     dP::Union{Nothing, AbstractMatrix} = nothing
-) where {T1<:Number, T2<:Number, T3<:Number}
+) where {T1<:Number, T2<:Number, T3<:Number, verbose}
 
     T = promote_type(T1, T2, T3) |> float
 
@@ -247,9 +252,10 @@ function igrf(
     Ω::Number;
     max_degree::Int = _IGRF_MAX_DEGREE,
     show_warnings::Bool = true,
+    verbosity::Val{verbose} = Val(false),
     P::Union{Nothing, AbstractMatrix} = nothing,
     dP::Union{Nothing, AbstractMatrix} = nothing
-)
+) where {verbose}
     return igrf(
         date,
         r,
@@ -258,6 +264,7 @@ function igrf(
         Val(:geocentric);
         max_degree = max_degree,
         show_warnings = show_warnings,
+        verbosity = verbosity,
         P = P,
         dP = dP
     )
@@ -271,9 +278,10 @@ function igrf(
     ::Val{:geocentric};
     max_degree::Int = _IGRF_MAX_DEGREE,
     show_warnings::Bool = true,
+    verbosity::Val{verbose} = Val(false),
     P::Union{Nothing, AbstractMatrix} = nothing,
     dP::Union{Nothing, AbstractMatrix} = nothing
-) where {T1<:Number, T2<:Number, T3<:Number}
+) where {T1<:Number, T2<:Number, T3<:Number, verbose}
 
     T = promote_type(T1, T2, T3) |> float
 
@@ -297,7 +305,7 @@ function igrf(
 
     # Warn the user that for dates after the year `rel_year` the accuracy maybe reduced.
     if show_warnings && (date > _IGRF_RELIABLE_YEAR)
-        @warn("The magnetic field computed with this IGRF version may be of reduced accuracy for years greater than $_IGRF_RELIABLE_YEAR.")
+        verbose && @warn("The magnetic field computed with this IGRF version may be of reduced accuracy for years greater than $_IGRF_RELIABLE_YEAR.")
     end
 
     # If the `max_degree` is equal or lower than 0, we must clamp it to 1.
@@ -392,9 +400,10 @@ function igrf(
     ::Val{:geodetic};
     max_degree::Int = _IGRF_MAX_DEGREE,
     show_warnings::Bool = true,
+    verbosity::Val{verbose} = Val(true),
     P::Union{Nothing, AbstractMatrix} = nothing,
     dP::Union{Nothing, AbstractMatrix} = nothing
-)
+) where {verbose}
 
     # TODO: This method has a small error (≈ 0.01 nT) compared with the `igrf12syn`.
     # However, the result is exactly the same as the MATLAB function in [3]. Hence, this
@@ -414,6 +423,7 @@ function igrf(
         Val(:geocentric);
         max_degree = max_degree,
         show_warnings = show_warnings,
+        verbosity = verbosity,
         P = P,
         dP = dP
     )
