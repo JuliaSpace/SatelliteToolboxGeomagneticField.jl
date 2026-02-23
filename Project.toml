@@ -18,20 +18,20 @@ ForwardDiff = "f6369f11-7733-5829-9624-2563aa707210"
 Zygote = "e88e6eb3-aa80-5325-afca-941959d7151f"
 
 [extensions]
-SatelliteToolboxGeomagneticModelsZygoteExt = ["ForwardDiff", "Zygote"]
+SatelliteToolboxGeomagneticFieldZygoteExt = ["ForwardDiff", "Zygote"]
 
 [compat]
 DelimitedFiles = "1.9"
 ForwardDiff = "1"
-LinearAlgebra = "1.10"
+LinearAlgebra = "1"
 ReferenceFrameRotations = "3"
 SatelliteToolboxBase = "1.1"
 SatelliteToolboxLegendre = "1"
 SatelliteToolboxTransformations = "1"
 StaticArrays = "1"
-Test = "1.10"
+Test = "1"
 Zygote = "0.7"
-julia = "1.10"
+julia = "1.10, 1.11, 1.12"
 
 [extras]
 DelimitedFiles = "8bb1440f-4735-579b-a4ab-409b98df4dab"

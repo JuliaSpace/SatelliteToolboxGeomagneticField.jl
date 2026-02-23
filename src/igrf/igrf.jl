@@ -13,6 +13,14 @@
 export igrf, igrfd
 
 ############################################################################################
+#                                     Helper Functions                                     #
+############################################################################################
+
+function _igrf_coefficient_index(date::Number)
+    return floor(Int, clamp((date - 1900) / 5 + 1, 0, (_IGRF_RELIABLE_YEAR - 1900) / 5))
+end
+
+############################################################################################
 #                                        Functions                                         #
 ############################################################################################
 
@@ -325,7 +333,7 @@ function igrf(
     # Compute the epoch that will be used to obtain the coefficients. This is necessary
     # because the IGRF provides coefficients every 5 years. Between two epochs, those
     # coefficients must be interpolated.
-    idx   = floor(Int, clamp((date - 1900) / 5 + 1, 0, (_IGRF_RELIABLE_YEAR - 1900) / 5))
+    idx = _igrf_coefficient_index(date)
     epoch = 1900 + (idx - 1) * 5
 
     # We must jump the first two columns that are reserved for the degree and order.
