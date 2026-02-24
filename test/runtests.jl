@@ -1,10 +1,7 @@
 using Test
 
-using AllocCheck
-using Aqua
 using DelimitedFiles
 using ForwardDiff
-using JET
 using LinearAlgebra
 using ReferenceFrameRotations
 using SatelliteToolboxBase: LowerTriangularStorage, RowMajor
@@ -20,8 +17,21 @@ end
     include("./dipole.jl")
 end
 
-@testset "Performance" verbose = true begin
-    include("./performance.jl")
+if isempty(VERSION.prerelease)
+    using Pkg
+    Pkg.add("JET")
+    Pkg.add("AllocCheck")
+    Pkg.add("Aqua")
+
+    using JET
+    using AllocCheck
+    using Aqua
+
+    @testset "Performance Tests" verbose = true begin
+        include("./performance.jl")
+    end
+else
+    @warn "Performance checks not guaranteed to work on julia-nightly, skipping"
 end
 
 @testset "Zygote Extension" verbose = true begin
