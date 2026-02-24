@@ -13,14 +13,6 @@
 export igrf, igrfd
 
 ############################################################################################
-#                                     Helper Functions                                     #
-############################################################################################
-
-function _igrf_coefficient_index(date::Number)
-    return floor(Int, clamp((date - 1900) / 5 + 1, 0, (_IGRF_RELIABLE_YEAR - 1900) / 5))
-end
-
-############################################################################################
 #                                        Functions                                         #
 ############################################################################################
 
@@ -100,10 +92,10 @@ function igrfd(
     Ω::Number;
     max_degree::Int = _IGRF_MAX_DEGREE,
     show_warnings::Bool = true,
-    verbosity::Val{verbose} = Val(true),
+    verbose::Val{verbosity} = Val(true),
     P::Union{Nothing, AbstractMatrix} = nothing,
     dP::Union{Nothing, AbstractMatrix} = nothing
-) where {verbose}
+) where {verbosity}
     return igrfd(
         date,
         r,
@@ -112,7 +104,7 @@ function igrfd(
         Val(:geocentric);
         max_degree = max_degree,
         show_warnings = show_warnings,
-        verbosity = verbosity,
+        verbose = verbose,
         P = P,
         dP = dP
     )
@@ -126,10 +118,10 @@ function igrfd(
     ::Val{:geocentric};
     max_degree::Int = _IGRF_MAX_DEGREE,
     show_warnings::Bool = true,
-    verbosity::Val{verbose} = Val(true),
+    verbose::Val{verbosity} = Val(true),
     P::Union{Nothing, AbstractMatrix} = nothing,
     dP::Union{Nothing, AbstractMatrix} = nothing
-) where {T1<:Number, T2<:Number, T3<:Number, verbose}
+) where {T1<:Number, T2<:Number, T3<:Number, verbosity}
 
     T = promote_type(T1, T2, T3) |> float
 
@@ -150,7 +142,7 @@ function igrfd(
         Val(:geocentric);
         max_degree = max_degree,
         show_warnings = show_warnings,
-        verbosity = verbosity,
+        verbose = verbose,
         P = P,
         dP = dP
     )
@@ -164,10 +156,10 @@ function igrfd(
     ::Val{:geodetic};
     max_degree::Int = _IGRF_MAX_DEGREE,
     show_warnings::Bool = true,
-    verbosity::Val{verbose} = Val(true),
+    verbose::Val{verbosity} = Val(true),
     P::Union{Nothing, AbstractMatrix} = nothing,
     dP::Union{Nothing, AbstractMatrix} = nothing
-) where {T1<:Number, T2<:Number, T3<:Number, verbose}
+) where {T1<:Number, T2<:Number, T3<:Number, verbosity}
 
     T = promote_type(T1, T2, T3) |> float
 
@@ -260,10 +252,10 @@ function igrf(
     Ω::Number;
     max_degree::Int = _IGRF_MAX_DEGREE,
     show_warnings::Bool = true,
-    verbosity::Val{verbose} = Val(false),
+    verbose::Val{verbosity} = Val(true),
     P::Union{Nothing, AbstractMatrix} = nothing,
     dP::Union{Nothing, AbstractMatrix} = nothing
-) where {verbose}
+) where {verbosity}
     return igrf(
         date,
         r,
@@ -272,7 +264,7 @@ function igrf(
         Val(:geocentric);
         max_degree = max_degree,
         show_warnings = show_warnings,
-        verbosity = verbosity,
+        verbose = verbose,
         P = P,
         dP = dP
     )
@@ -286,10 +278,10 @@ function igrf(
     ::Val{:geocentric};
     max_degree::Int = _IGRF_MAX_DEGREE,
     show_warnings::Bool = true,
-    verbosity::Val{verbose} = Val(false),
+    verbose::Val{verbosity} = Val(true),
     P::Union{Nothing, AbstractMatrix} = nothing,
     dP::Union{Nothing, AbstractMatrix} = nothing
-) where {T1<:Number, T2<:Number, T3<:Number, verbose}
+) where {T1<:Number, T2<:Number, T3<:Number, verbosity}
 
     T = promote_type(T1, T2, T3) |> float
 
@@ -313,7 +305,7 @@ function igrf(
 
     # Warn the user that for dates after the year `rel_year` the accuracy maybe reduced.
     if show_warnings && (date > _IGRF_RELIABLE_YEAR)
-        verbose && @warn("The magnetic field computed with this IGRF version may be of reduced accuracy for years greater than $_IGRF_RELIABLE_YEAR.")
+        verbosity && @warn("The magnetic field computed with this IGRF version may be of reduced accuracy for years greater than $_IGRF_RELIABLE_YEAR.")
     end
 
     # If the `max_degree` is equal or lower than 0, we must clamp it to 1.
@@ -333,7 +325,7 @@ function igrf(
     # Compute the epoch that will be used to obtain the coefficients. This is necessary
     # because the IGRF provides coefficients every 5 years. Between two epochs, those
     # coefficients must be interpolated.
-    idx = _igrf_coefficient_index(date)
+    idx   = floor(Int, clamp((date - 1900) / 5 + 1, 0, (_IGRF_RELIABLE_YEAR - 1900) / 5))
     epoch = 1900 + (idx - 1) * 5
 
     # We must jump the first two columns that are reserved for the degree and order.
@@ -408,10 +400,10 @@ function igrf(
     ::Val{:geodetic};
     max_degree::Int = _IGRF_MAX_DEGREE,
     show_warnings::Bool = true,
-    verbosity::Val{verbose} = Val(true),
+    verbose::Val{verbosity} = Val(true),
     P::Union{Nothing, AbstractMatrix} = nothing,
     dP::Union{Nothing, AbstractMatrix} = nothing
-) where {verbose}
+) where {verbosity}
 
     # TODO: This method has a small error (≈ 0.01 nT) compared with the `igrf12syn`.
     # However, the result is exactly the same as the MATLAB function in [3]. Hence, this
@@ -431,7 +423,7 @@ function igrf(
         Val(:geocentric);
         max_degree = max_degree,
         show_warnings = show_warnings,
-        verbosity = verbosity,
+        verbose = verbose,
         P = P,
         dP = dP
     )
