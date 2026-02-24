@@ -9,94 +9,88 @@
 end
 
 @testset "JET Testing" begin
-    rep = JET.test_package(SatelliteToolboxGeomagneticField; toplevel_logger=nothing, target_modules=(@__MODULE__,))
+    rep = JET.test_package(SatelliteToolboxGeomagneticField; toplevel_logger=nothing, target_modules=(SatelliteToolboxGeomagneticField,))
 end
 
-# Skip allocation tests on macOS with Julia 1.12+ due to AllocCheck detecting
-# platform-specific runtime calls (jl_get_pgcstack_static) as allocations
-if Sys.isapple() && (VERSION.major == 1 && VERSION.minor >= 12)
-    @warn "Allocation tests skipped on macOS with Julia 1.12+ due to AllocCheck platform limitations"
-else
-    @testset "Allocation Check" begin
-        @test length(
-            check_allocs(
-                (date, r, λ, Ω, P, dP) -> begin
-                    igrf(date, r, λ, Ω; P = P, dP = dP, verbose = Val(false))
-                end,
-                (Float64, Float64, Float64, Float64, Matrix{Float64}, Matrix{Float64})
-            )
-        ) == 0
+@testset "Allocation Check" begin
+    @test length(
+        check_allocs(
+            (date, r, λ, Ω, P, dP) -> begin
+                igrf(date, r, λ, Ω; P = P, dP = dP, verbose = Val(false))
+            end,
+            (Float64, Float64, Float64, Float64, Matrix{Float64}, Matrix{Float64})
+        )
+    ) == 0
 
-        @test length(
-            check_allocs(
-                (date, h, λ, Ω, P, dP) -> begin
-                    igrf(date, h, λ, Ω, Val(:geodetic); P = P, dP = dP, verbose = Val(false))
-                end,
-                (Float64, Float64, Float64, Float64, Matrix{Float64}, Matrix{Float64})
-            )
-        ) == 0
+    @test length(
+        check_allocs(
+            (date, h, λ, Ω, P, dP) -> begin
+                igrf(date, h, λ, Ω, Val(:geodetic); P = P, dP = dP, verbose = Val(false))
+            end,
+            (Float64, Float64, Float64, Float64, Matrix{Float64}, Matrix{Float64})
+        )
+    ) == 0
 
-        @test length(
-            check_allocs(
-                (date, r, λ, Ω, P, dP) -> begin
-                    igrfd(date, r, λ, Ω; P = P, dP = dP, verbose = Val(false))
-                end,
-                (Float64, Float64, Float64, Float64, Matrix{Float64}, Matrix{Float64})
-            )
-        ) == 0
+    @test length(
+        check_allocs(
+            (date, r, λ, Ω, P, dP) -> begin
+                igrfd(date, r, λ, Ω; P = P, dP = dP, verbose = Val(false))
+            end,
+            (Float64, Float64, Float64, Float64, Matrix{Float64}, Matrix{Float64})
+        )
+    ) == 0
 
-        @test length(
-            check_allocs(
-                (date, h, λ, Ω, P, dP) -> begin
-                    igrfd(date, h, λ, Ω, Val(:geodetic); P = P, dP = dP, verbose = Val(false))
-                end,
-                (Float64, Float64, Float64, Float64, Matrix{Float64}, Matrix{Float64})
-            )
-        ) == 0
+    @test length(
+        check_allocs(
+            (date, h, λ, Ω, P, dP) -> begin
+                igrfd(date, h, λ, Ω, Val(:geodetic); P = P, dP = dP, verbose = Val(false))
+            end,
+            (Float64, Float64, Float64, Float64, Matrix{Float64}, Matrix{Float64})
+        )
+    ) == 0
 
-        @test length(
-            check_allocs(
-                (r_e, year) -> begin
-                    geomagnetic_dipole_field(r_e, year)
-                end,
-                (SVector{3, Float64}, Float64)
-            )
-        ) == 0
+    @test length(
+        check_allocs(
+            (r_e, year) -> begin
+                geomagnetic_dipole_field(r_e, year)
+            end,
+            (SVector{3, Float64}, Float64)
+        )
+    ) == 0
 
-        @test length(
-            check_allocs(
-                (date, r, λ, Ω, P, dP) -> begin
-                    igrf(date, r, λ, Ω; P = P, dP = dP, verbose = Val(false))
-                end,
-                (Float64, Float64, Float64, Float64, LowerTriangularStorage{RowMajor, Float64}, LowerTriangularStorage{RowMajor, Float64})
-            )
-        ) == 0
+    @test length(
+        check_allocs(
+            (date, r, λ, Ω, P, dP) -> begin
+                igrf(date, r, λ, Ω; P = P, dP = dP, verbose = Val(false))
+            end,
+            (Float64, Float64, Float64, Float64, LowerTriangularStorage{RowMajor, Float64}, LowerTriangularStorage{RowMajor, Float64})
+        )
+    ) == 0
 
-        @test length(
-            check_allocs(
-                (date, h, λ, Ω, P, dP) -> begin
-                    igrf(date, h, λ, Ω, Val(:geodetic); P = P, dP = dP, verbose = Val(false))
-                end,
-                (Float64, Float64, Float64, Float64, LowerTriangularStorage{RowMajor, Float64}, LowerTriangularStorage{RowMajor, Float64})
-            )
-        ) == 0
+    @test length(
+        check_allocs(
+            (date, h, λ, Ω, P, dP) -> begin
+                igrf(date, h, λ, Ω, Val(:geodetic); P = P, dP = dP, verbose = Val(false))
+            end,
+            (Float64, Float64, Float64, Float64, LowerTriangularStorage{RowMajor, Float64}, LowerTriangularStorage{RowMajor, Float64})
+        )
+    ) == 0
 
-        @test length(
-            check_allocs(
-                (date, r, λ, Ω, P, dP) -> begin
-                    igrfd(date, r, λ, Ω; P = P, dP = dP, verbose = Val(false))
-                end,
-                (Float64, Float64, Float64, Float64, LowerTriangularStorage{RowMajor, Float64}, LowerTriangularStorage{RowMajor, Float64})
-            )
-        ) == 0
+    @test length(
+        check_allocs(
+            (date, r, λ, Ω, P, dP) -> begin
+                igrfd(date, r, λ, Ω; P = P, dP = dP, verbose = Val(false))
+            end,
+            (Float64, Float64, Float64, Float64, LowerTriangularStorage{RowMajor, Float64}, LowerTriangularStorage{RowMajor, Float64})
+        )
+    ) == 0
 
-        @test length(
-            check_allocs(
-                (date, h, λ, Ω, P, dP) -> begin
-                    igrfd(date, h, λ, Ω, Val(:geodetic); P = P, dP = dP, verbose = Val(false))
-                end,
-                (Float64, Float64, Float64, Float64, LowerTriangularStorage{RowMajor, Float64}, LowerTriangularStorage{RowMajor, Float64})
-            )
-        ) == 0
-    end
+    @test length(
+        check_allocs(
+            (date, h, λ, Ω, P, dP) -> begin
+                igrfd(date, h, λ, Ω, Val(:geodetic); P = P, dP = dP, verbose = Val(false))
+            end,
+            (Float64, Float64, Float64, Float64, LowerTriangularStorage{RowMajor, Float64}, LowerTriangularStorage{RowMajor, Float64})
+        )
+    ) == 0
 end

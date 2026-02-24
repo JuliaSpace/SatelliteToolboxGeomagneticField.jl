@@ -7,9 +7,8 @@ using ForwardDiff
 using JET
 using LinearAlgebra
 using ReferenceFrameRotations
-using SatelliteToolboxGeomagneticField
-
 using SatelliteToolboxBase: LowerTriangularStorage, RowMajor
+using SatelliteToolboxGeomagneticField
 using StaticArrays
 using Zygote
 

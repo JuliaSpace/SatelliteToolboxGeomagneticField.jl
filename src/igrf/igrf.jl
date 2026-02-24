@@ -104,7 +104,7 @@ function igrfd(
         Val(:geocentric);
         max_degree = max_degree,
         show_warnings = show_warnings,
-        verbose = verbose,
+        verbose = Val(verbosity),
         P = P,
         dP = dP
     )
@@ -142,7 +142,7 @@ function igrfd(
         Val(:geocentric);
         max_degree = max_degree,
         show_warnings = show_warnings,
-        verbose = verbose,
+        verbose = Val(verbosity),
         P = P,
         dP = dP
     )
@@ -171,6 +171,7 @@ function igrfd(
         Val(:geodetic);
         max_degree = max_degree,
         show_warnings = show_warnings,
+        verbose = Val(verbosity),
         P = P,
         dP = dP
     )
@@ -264,7 +265,7 @@ function igrf(
         Val(:geocentric);
         max_degree = max_degree,
         show_warnings = show_warnings,
-        verbose = verbose,
+        verbose = Val(verbosity),
         P = P,
         dP = dP
     )
@@ -423,7 +424,7 @@ function igrf(
         Val(:geocentric);
         max_degree = max_degree,
         show_warnings = show_warnings,
-        verbose = verbose,
+        verbose = Val(verbosity),
         P = P,
         dP = dP
     )
