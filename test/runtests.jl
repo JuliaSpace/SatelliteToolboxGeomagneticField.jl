@@ -1,13 +1,11 @@
 using Test
 
 using DelimitedFiles
-using ForwardDiff
 using LinearAlgebra
 using ReferenceFrameRotations
 using SatelliteToolboxBase: LowerTriangularStorage, RowMajor
 using SatelliteToolboxGeomagneticField
 using StaticArrays
-using Zygote
 
 @testset "IGRF" verbose = true begin
     include("./igrf.jl")
@@ -30,10 +28,13 @@ if isempty(VERSION.prerelease)
     @testset "Performance Tests" verbose = true begin
         include("./performance.jl")
     end
-else
-    @warn "Performance checks not guaranteed to work on julia-nightly, skipping"
-end
 
-@testset "Zygote Extension" verbose = true begin
-    include("./zygote_extension.jl")
+    using ForwardDiff
+    using Zygote
+
+    @testset "Zygote Extension" verbose = true begin
+        include("./zygote_extension.jl")
+    end
+else
+    @warn "Performance checks and differentiation extension not guaranteed to work on julia-nightly, skipping"
 end

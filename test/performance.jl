@@ -26,6 +26,16 @@ end
         )
     ) == 0
 
+    # THIS IS TO BE REMOVED, NEED TO DETERMINE IF MACOSX CAN BE RESOLVED
+    println(
+        check_allocs(
+            (date, r, λ, Ω, P, dP) -> begin
+                igrf(date, r, λ, Ω; P = P, dP = dP, verbose = Val(false))
+            end,
+            (Float64, Float64, Float64, Float64, Matrix{Float64}, Matrix{Float64})
+        )
+    )
+
     @test length(
         check_allocs(
             (date, h, λ, Ω, P, dP) -> begin
