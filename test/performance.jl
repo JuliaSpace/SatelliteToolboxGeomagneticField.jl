@@ -8,8 +8,12 @@
     Aqua.test_all(SatelliteToolboxGeomagneticField; ambiguities=(recursive = false), deps_compat=(check_extras = false))
 end
 
-@testset "JET Testing" begin
-    rep = JET.test_package(SatelliteToolboxGeomagneticField; toplevel_logger=nothing, target_modules=(SatelliteToolboxGeomagneticField,))
+if VERSION >= v"1.12"
+    @warn "JET tests skipped on Julia 1.12+ due to JET compatibility limitations"
+else
+    @testset "JET Testing" begin
+        rep = JET.test_package(SatelliteToolboxGeomagneticField; toplevel_logger=nothing, target_modules=(SatelliteToolboxGeomagneticField,))
+    end
 end
 
 @testset "Allocation Check" begin

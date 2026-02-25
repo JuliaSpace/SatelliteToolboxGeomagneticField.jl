@@ -296,11 +296,11 @@ function igrf(
     end
 
     # Check if the latitude and longitude are valid.
-    if (λ < -π/2) || (λ > π/2)
+    if (λ < -T(π)/2) || (λ > T(π)/2)
         throw(ArgumentError("The latitude must be between -π / 2 and +π / 2 rad."))
     end
 
-    if (Ω < -π) || (Ω > π)
+    if (Ω < -T(π)) || (Ω > T(π))
         throw(ArgumentError("The longitude must be between -π and +π rad."))
     end
 
