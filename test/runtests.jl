@@ -29,6 +29,9 @@ if isempty(VERSION.prerelease)
         include("./performance.jl")
     end
 
+    Pkg.add("ForwardDiff")
+    Pkg.add("Zygote")
+    
     using ForwardDiff
     using Zygote
 
