@@ -43,7 +43,7 @@ function geomagnetic_dipole_field(r_e::AbstractVector{T}, year::Number = 2020) w
     r = norm(r_e)
 
     # Compute the unitary vector that points to the desired direction.
-    er_e = SVector{3, T}(r_e) / r
+    er_e = SVector{3, T}(r_e[1], r_e[2], r_e[3]) / r
 
     # Compute the geomagnetic field vector [nT].
     B_e = (3er_e * er_e' - I) * k₀_e * T(1e9) / r^3

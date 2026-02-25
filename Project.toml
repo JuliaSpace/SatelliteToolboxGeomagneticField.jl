@@ -13,20 +13,30 @@ SatelliteToolboxLegendre = "7fa26607-a272-47b2-9aa2-a6c1d419d9d2"
 SatelliteToolboxTransformations = "6b019ec1-7a1e-4f04-96c7-a9db1ca5514d"
 StaticArrays = "90137ffa-7385-5640-81b9-e52037218182"
 
+[weakdeps]
+ForwardDiff = "f6369f11-7733-5829-9624-2563aa707210"
+Zygote = "e88e6eb3-aa80-5325-afca-941959d7151f"
+
+[extensions]
+SatelliteToolboxGeomagneticFieldZygoteExt = ["ForwardDiff", "Zygote"]
+
 [compat]
 DelimitedFiles = "1.9"
-LinearAlgebra = "1.10"
+ForwardDiff = "1"
+LinearAlgebra = "1"
 ReferenceFrameRotations = "3"
 SatelliteToolboxBase = "1.1"
 SatelliteToolboxLegendre = "1"
 SatelliteToolboxTransformations = "1"
 StaticArrays = "1"
-Test = "1.10"
-julia = "1.10"
+Test = "1"
+Zygote = "0.7"
+julia = "1.10, 1.11, 1.12"
 
 [extras]
 DelimitedFiles = "8bb1440f-4735-579b-a4ab-409b98df4dab"
+Pkg = "44cfe95a-1eb2-52ea-b672-e2afdf69b78f"
 Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
 
 [targets]
-test = ["Test", "DelimitedFiles"]
+test = ["Test", "DelimitedFiles", "Pkg"]
