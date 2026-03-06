@@ -1,6 +1,12 @@
 SatelliteToolboxGeomagneticField.jl Changelog
 =============================================
 
+Version 1.3.0
+-------------
+
+- ![Feature][badge-feature] The package has now differentiability support. (PR
+  [#4][gh-pr-4])
+
 Version 1.2.0
 -------------
 
@@ -52,3 +58,5 @@ Version 0.1.0
 [badge-info]: https://img.shields.io/badge/Info-gray.svg
 
 [gh-issue-3]: https://github.com/JuliaSpace/SatelliteToolboxGeomagneticField.jl/issues/3
+
+[gh-pr-4]: https://github.com/JuliaSpace/SatelliteToolboxGeomagneticField.jl/pull/4
