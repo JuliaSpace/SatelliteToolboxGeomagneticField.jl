@@ -5,10 +5,10 @@
 
 # SatelliteToolboxGeomagneticField.jl
 
-[![CI](https://github.com/JuliaSpace/SatelliteToolboxGeomagneticField.jl/actions/workflows/ci.yml/badge.svg)](https://github.com/JuliaSpace/SatelliteToolboxGeomagneticField.jl/actions/workflows/ci.yml)
-[![codecov](https://codecov.io/gh/JuliaSpace/SatelliteToolboxGeomagneticField.jl/branch/main/graph/badge.svg?token=HW2Y9NA0L5)](https://codecov.io/gh/JuliaSpace/SatelliteToolboxGeomagneticField.jl)
-[![Code Style: Blue](https://img.shields.io/badge/code%20style-blue-4495d1.svg)](https://github.com/invenia/BlueStyle)
-[![DOI](https://zenodo.org/badge/637508928.svg)](https://zenodo.org/doi/10.5281/zenodo.11246300)
+[![CI](https://img.shields.io/github/actions/workflow/status/JuliaSpace/SatelliteToolboxGeomagneticField.jl/ci.yml?style=flat-square&logo=githubactions&logoColor=white&labelColor=475569&label=CI)](https://github.com/JuliaSpace/SatelliteToolboxGeomagneticField.jl/actions/workflows/ci.yml)
+[![Codecov](https://img.shields.io/codecov/c/github/JuliaSpace/SatelliteToolboxGeomagneticField.jl?token=HW2Y9NA0L5&style=flat-square&logo=codecov&logoColor=white&labelColor=475569)](https://codecov.io/gh/JuliaSpace/SatelliteToolboxGeomagneticField.jl)
+[![Code Style: Blue](https://img.shields.io/badge/code%20style-blue-4495D1?style=flat-square&logo=julia&logoColor=white&labelColor=475569)](https://github.com/invenia/BlueStyle)
+[![DOI](https://img.shields.io/badge/DOI-10.5281%2Fzenodo.11246300-DB2777?style=flat-square&logo=doi&logoColor=white&labelColor=475569)](https://zenodo.org/doi/10.5281/zenodo.11246300)
 
 This packages contains models to compute the geomagnetic field vector. We currently have two
 models implemented:
