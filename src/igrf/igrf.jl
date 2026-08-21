@@ -65,6 +65,11 @@ If `R` is omitted, it defaults to `Val(:geocentric)`.
     (**Default** = 13)
 - `show_warnings::Bool`: Show warnings about the data.
     (**Default** = `true`)
+- `verbose::Val`: If it is `Val(true)`, the warning about the reduced accuracy can be
+    printed using `@warn`. If it is `Val(false)`, the code related to the warning is
+    removed at compile time, enabling allocation-free calls. Notice that `show_warnings`
+    must also be `true` for the warning to be printed.
+    (**Default** = `Val(true)`)
 - `P::Union{Nothing, AbstractMatrix}`: An optional matrix that must contain at least
     `max_degree + 1 × max_degree + 1` real numbers that will be used to store the Legendre
     coefficients, reducing the allocations. If it is `nothing`, the matrix will be created
@@ -235,6 +240,11 @@ If `R` is omitted, it defaults to `Val(:geocentric)`.
     (**Default** = 13)
 - `show_warnings::Bool`: Show warnings about the data.
     (**Default** = `true`)
+- `verbose::Val`: If it is `Val(true)`, the warning about the reduced accuracy can be
+    printed using `@warn`. If it is `Val(false)`, the code related to the warning is
+    removed at compile time, enabling allocation-free calls. Notice that `show_warnings`
+    must also be `true` for the warning to be printed.
+    (**Default** = `Val(true)`)
 - `P::Union{Nothing, AbstractMatrix}`: An optional matrix that must contain at least
     `max_degree + 1 × max_degree + 1` real numbers that will be used to store the Legendre
     coefficients, reducing the allocations. If it is `nothing`, the matrix will be created
