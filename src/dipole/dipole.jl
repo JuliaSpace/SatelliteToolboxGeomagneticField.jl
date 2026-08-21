@@ -72,17 +72,19 @@ function _geomagnetic_dipole_coefficients(year::Number)
         return deg2rad(C[end, 2]), deg2rad(C[end, 3]), C[end, 4] * 1e22
 
     else
-        # Perform a interval binary search of `year` in `C[1, :]`. It means that this
-        # algorithm returns `id` such that `C[id, 1] <= year < C[id + 1, 1]`.
+        # Perform an interval binary search of `year` in `C[1, :]`. It means that this
+        # algorithm returns `id` such that `C[id, 1] <= year < C[id + 1, 1]`. Notice that we
+        # use 0 as a sentinel value to indicate that the interval was not found yet,
+        # avoiding a type instability caused by initializing `id` with `nothing`.
         num_elements = size(C, 1)
         low  = 1
         high = num_elements
-        id   = nothing
+        id   = 0
 
         while low < high
             mid = div(low + high, 2, RoundDown)
 
-            if (mid == num_elements) || (C[mid, 1] <= year < C[mid + 1, 1])
+            if C[mid, 1] <= year < C[mid + 1, 1]
                 id = mid
                 break
 
@@ -95,7 +97,7 @@ function _geomagnetic_dipole_coefficients(year::Number)
             end
         end
 
-        isnothing(id) && (id = low)
+        (id == 0) && (id = low)
 
         # Linearly interpolate the values.
         Δt    = year - C[id, 1]
