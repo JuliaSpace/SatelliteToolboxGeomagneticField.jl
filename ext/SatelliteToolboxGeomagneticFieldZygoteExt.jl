@@ -1,7 +1,8 @@
 ## Description #############################################################################
 #
-# Zygote Extension for the SatelliteToolboxGeomagneticField.jl package. Needed since igrf
-# is mutating and changing that would require a large rework. Instead use ForwardDiff for this function instead.
+# Zygote extension for the SatelliteToolboxGeomagneticField.jl package. It is needed
+# because `igrf` mutates matrices, and changing this behavior would require a large rework.
+# Hence, we use ForwardDiff to compute the derivatives of this function.
 #
 ############################################################################################
 

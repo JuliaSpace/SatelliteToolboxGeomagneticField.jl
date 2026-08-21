@@ -30,14 +30,14 @@ The position representation is defined by `R`. If `R` is `Val(:geocentric)`, the
 be **geocentric** coordinates:
 
 1. Distance from the Earth center `r` [m];
-2. Geocentric latitude `λ` ∈ (-90°, +90°); and
-3. Geocentric longitude `Ω` ∈ (-180°, +180°).
+2. Geocentric latitude `λ` ∈ [-90°, +90°]; and
+3. Geocentric longitude `Ω` ∈ [-180°, +180°].
 
 If `R` is `Val(:geodetic)`, the input must be **geodetic** coordinates:
 
-1 Altitude above the reference ellipsoid `h` (WGS-84) [m];
-2. Geodetic latitude `λ` ∈ (-90°, +90°); and
-3. Geodetic longitude `Ω` ∈ (-180°, +180°).
+1. Altitude above the reference ellipsoid `h` (WGS-84) [m];
+2. Geodetic latitude `λ` ∈ [-90°, +90°]; and
+3. Geodetic longitude `Ω` ∈ [-180°, +180°].
 
 If `R` is omitted, it defaults to `Val(:geocentric)`.
 
@@ -61,7 +61,7 @@ If `R` is omitted, it defaults to `Val(:geocentric)`.
 
 - `max_degree::Int`: Maximum degree used in the spherical harmonics when computing the
     geomagnetic field. If it is higher than the available number of coefficients in the IGRF
-    matrices, it will be clamped. If it is equal of lower than 0, it will be set to 1.
+    matrices, it will be clamped. If it is equal to or lower than 0, it will be set to 1.
     (**Default** = 13)
 - `show_warnings::Bool`: Show warnings about the data.
     (**Default** = `true`)
@@ -200,14 +200,14 @@ The position representation is defined by `R`. If `R` is `Val(:geocentric)`, the
 be **geocentric** coordinates:
 
 1. Distance from the Earth center `r` [m];
-2. Geocentric latitude `λ` ∈ (-π / 2, +π / 2) [rad]; and
-3. Geocentric longitude `Ω` ∈ (-π, +π) [rad].
+2. Geocentric latitude `λ` ∈ [-π / 2, +π / 2] [rad]; and
+3. Geocentric longitude `Ω` ∈ [-π, +π] [rad].
 
 If `R` is `Val(:geodetic)`, the input must be **geodetic** coordinates:
 
-1. Altitude above the reference ellipsoid `h` (WGS-84) \\[m];
-2. Geodetic latitude `λ` ∈ (-π/2, +π/2) [rad]; and
-3. Geodetic longitude `Ω` ∈ (-π, +π) [rad].
+1. Altitude above the reference ellipsoid `h` (WGS-84) [m];
+2. Geodetic latitude `λ` ∈ [-π / 2, +π / 2] [rad]; and
+3. Geodetic longitude `Ω` ∈ [-π, +π] [rad].
 
 If `R` is omitted, it defaults to `Val(:geocentric)`.
 
@@ -231,7 +231,7 @@ If `R` is omitted, it defaults to `Val(:geocentric)`.
 
 - `max_degree::Int`: Maximum degree used in the spherical harmonics when computing the
     geomagnetic field. If it is higher than the available number of coefficients in the IGRF
-    matrices, it will be clamped. If it is equal of lower than 0, it will be set to 1.
+    matrices, it will be clamped. If it is equal to or lower than 0, it will be set to 1.
     (**Default** = 13)
 - `show_warnings::Bool`: Show warnings about the data.
     (**Default** = `true`)
@@ -297,7 +297,8 @@ function igrf(
 
     # == Input Verification ================================================================
 
-    # Check the data, since this model is valid for years between 1900 and `max_year`.
+    # Check the date, since this model is valid for years between 1900 and
+    # `_IGRF_LAST_YEAR`.
     if (date < 1900) || (date > _IGRF_LAST_YEAR)
         throw(ArgumentError(
             "This IGRF version will not work for years outside the interval [1900, $_IGRF_LAST_YEAR]."
@@ -313,7 +314,8 @@ function igrf(
         throw(ArgumentError("The longitude must be between -π and +π rad."))
     end
 
-    # Warn the user that for dates after the year `rel_year` the accuracy maybe reduced.
+    # Warn the user that for dates after the year `_IGRF_RELIABLE_YEAR` the accuracy may be
+    # reduced.
     if show_warnings && (date > _IGRF_RELIABLE_YEAR)
         verbosity && @warn("The magnetic field computed with this IGRF version may be of reduced accuracy for years greater than $_IGRF_RELIABLE_YEAR.")
     end
@@ -468,7 +470,7 @@ Compute the geomagnetic potential gradient.
 # Arguments
 
 - `n_max::Int`: Maximum degree when computing the potential in the spherical harmonics.
-- `idx::Int: Index related to the desired epoch in the matrices `_IGRF_G` and `_IGRF_H`.
+- `idx::Int`: Index related to the desired epoch in the matrices `_IGRF_G` and `_IGRF_H`.
 - `r_km::T`: Position to compute the gradient from the Earth's center [km].
 - `θ::T`: Geocentric co-latitude [rad] ∈ [0, π].
 - `ϕ::T`: East-longitude [rad] ∈ [0, 2π].
@@ -560,19 +562,19 @@ function _igrf_geomagnetic_potential_gradient(
 
         # == Sine and Cosine with m = 1 ====================================================
         #
-        # This values will be used to update recursively `sin(m * ϕ)` and `cos(m * ϕ)`,
+        # These values will be used to update recursively `sin(m * ϕ)` and `cos(m * ϕ)`,
         # reducing the computational burden.
         #
         # TODO: Cache the computation.
         # We tried to compute those values only once using an external vector to store the
-        # values. However, it leads to a worst performance. This behavior need further
+        # values. However, it leads to a worse performance. This behavior needs further
         # investigation.
-        sin_mϕ   = +sin_ϕ    # sin( 1 * λ_gc)
-        sin_m_1ϕ = T(0)      # sin( 0 * λ_gc)
-        sin_m_2ϕ = -sin_ϕ    # sin(-1 * λ_gc)
-        cos_mϕ   = +cos_ϕ    # cos( 1 * λ_gc)
-        cos_m_1ϕ = T(1)      # cos( 0 * λ_gc)
-        cos_m_2ϕ = +cos_ϕ    # cos(-2 * λ_gc)
+        sin_mϕ   = +sin_ϕ    # sin( 1 * ϕ)
+        sin_m_1ϕ = T(0)      # sin( 0 * ϕ)
+        sin_m_2ϕ = -sin_ϕ    # sin(-1 * ϕ)
+        cos_mϕ   = +cos_ϕ    # cos( 1 * ϕ)
+        cos_m_1ϕ = T(1)      # cos( 0 * ϕ)
+        cos_m_2ϕ = +cos_ϕ    # cos(-1 * ϕ)
 
         # == Other Auxiliary Variables that Depend Only on `n` =============================
 

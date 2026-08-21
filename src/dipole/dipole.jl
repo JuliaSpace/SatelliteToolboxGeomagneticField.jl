@@ -22,7 +22,7 @@ omitted, it defaults to 2020.
 
 1. The output vector will be represented in the ECEF reference frame.
 2. The returned vector type is obtained by converting `T` to a float.
-3. The south geomagnetic pole position and dipole moment is obtained by interpolating the
+3. The south geomagnetic pole position and dipole moment are obtained by interpolating the
     values provided in **[1]**.
 
 # References

@@ -6,7 +6,7 @@
 #
 ## References ##############################################################################
 #
-# [1] https://www.ngdc.noaa.gov/IAGA/vmod/coeffs/igrf13coeffs.txt
+# [1] https://www.ngdc.noaa.gov/IAGA/vmod/coeffs/igrf14coeffs.txt
 #
 ############################################################################################
 
@@ -16,13 +16,13 @@ const _IGRF_A = 6371.2
 # Last year we can compute using this IGRF version.
 const _IGRF_LAST_YEAR = 2035
 
-# Last year we reliable data using this IGRF version.
+# Last year with reliable data using this IGRF version.
 const _IGRF_RELIABLE_YEAR = 2030
 
 # Last year with real measurements using this IGRF version.
 const _IGRF_LAST_YEAR_WITH_MEASUREMENTS = 2025
 
-# Those constant are based on v13 of the IGRF model.
+# These constants are based on v14 of the IGRF model.
 const _IGRF_G = Float64[
 # deg ord   IGRF   IGRF   IGRF   IGRF   IGRF   IGRF   IGRF   IGRF   IGRF   DGRF   DGRF   DGRF   DGRF   DGRF   DGRF   DGRF   DGRF   DGRF   DGRF   DGRF     DGRF      DGRF      DGRF      DGRF      DGRF     IGRF      SV
 #  n    m 1900.0 1905.0 1910.0 1915.0 1920.0 1925.0 1930.0 1935.0 1940.0 1945.0 1950.0 1955.0 1960.0 1965.0 1970.0 1975.0 1980.0 1985.0 1990.0 1995.0   2000.0    2005.0    2010.0    2015.0    2020.0   2025.0 2025-30
