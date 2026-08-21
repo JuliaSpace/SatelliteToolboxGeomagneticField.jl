@@ -29,7 +29,7 @@ omitted, it defaults to 2020.
 
 - **[1]**: http://wdc.kugi.kyoto-u.ac.jp/poles/polesexp.html
 """
-function geomagnetic_dipole_field(r_e::AbstractVector{T}, year::Number = 2020) where T
+function geomagnetic_dipole_field(r_e::AbstractVector{T}, year::Number = 2020) where {T}
     # Convert the input type to a float to support, e.g., vectors of integers.
     Tf = float(T)
 
@@ -77,9 +77,9 @@ function _geomagnetic_dipole_coefficients(year::Number)
         # use 0 as a sentinel value to indicate that the interval was not found yet,
         # avoiding a type instability caused by initializing `id` with `nothing`.
         num_elements = size(C, 1)
-        low  = 1
+        low = 1
         high = num_elements
-        id   = 0
+        id = 0
 
         while low < high
             mid = div(low + high, 2, RoundDown)
@@ -93,14 +93,13 @@ function _geomagnetic_dipole_coefficients(year::Number)
 
             elseif (C[mid, 1] > year)
                 high = mid
-
             end
         end
 
         (id == 0) && (id = low)
 
         # Linearly interpolate the values.
-        Δt    = year - C[id, 1]
+        Δt = year - C[id, 1]
 
         year₀ = C[id, 1]
         lat₀  = C[id, 2]
@@ -112,9 +111,9 @@ function _geomagnetic_dipole_coefficients(year::Number)
         Δlon  = C[id + 1, 3] - lon₀
         Δm    = C[id + 1, 4] - m₀
 
-        lat   = lat₀ + Δlat / Δyear * Δt
-        lon   = lon₀ + Δlon / Δyear * Δt
-        m     = m₀ + Δm / Δyear * Δt
+        lat = lat₀ + Δlat / Δyear * Δt
+        lon = lon₀ + Δlon / Δyear * Δt
+        m   = m₀ + Δm / Δyear * Δt
 
         # Return the values with the correct units.
         return deg2rad(lat), deg2rad(lon), m * 1e22

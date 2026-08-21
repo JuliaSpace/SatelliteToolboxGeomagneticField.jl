@@ -39,9 +39,7 @@ end
 
     function loss_reduced(x)
         B = igrf(
-            x[1], x[2], x[3], x[4], Val(:geocentric);
-            max_degree = 4,
-            show_warnings = false,
+            x[1], x[2], x[3], x[4], Val(:geocentric); max_degree = 4, show_warnings = false
         )
         return sum(B)
     end
@@ -54,9 +52,9 @@ end
 
 @testset "Zygote IGRF Geocentric Different Locations" begin
     test_cases = [
-        (2015.0, 7000e3,  0.78, -0.50),
-        (2005.5, 6500e3, -0.30,  2.10),
-        (2025.0, 6900e3,  1.20, -2.80),
+        (2015.0, 7000e3, 0.78, -0.50),
+        (2005.5, 6500e3, -0.30, 2.10),
+        (2025.0, 6900e3, 1.20, -2.80),
     ]
 
     for (date, r, λ, Ω) in test_cases

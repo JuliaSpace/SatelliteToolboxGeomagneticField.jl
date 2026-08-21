@@ -27,9 +27,8 @@ function ChainRulesCore.rrule(
     show_warnings::Bool = true,
     verbose::Val{verbosity} = Val(false),
     P::Union{Nothing, AbstractMatrix} = nothing,
-    dP::Union{Nothing, AbstractMatrix} = nothing
+    dP::Union{Nothing, AbstractMatrix} = nothing,
 ) where {verbosity}
-
     y = igrf(
         date,
         r,
@@ -55,7 +54,7 @@ function ChainRulesCore.rrule(
                 show_warnings = show_warnings,
                 verbose = verbose,
             ),
-            [date; r; λ_gc; Ω]
+            [date; r; λ_gc; Ω],
         )
 
         vjp = Δ' * jac
@@ -64,7 +63,6 @@ function ChainRulesCore.rrule(
     end
 
     return y, _igrf_pullback
-
 end
 
 end

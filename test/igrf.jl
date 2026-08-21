@@ -45,12 +45,12 @@ const igrf14_geodetic_test   = readdlm("./IGRF14_test_geodetic.txt")
         else
             Ba = @test_logs (
                 :warn,
-                "The magnetic field computed with this IGRF version may be of reduced accuracy for years greater than 2030."
+                "The magnetic field computed with this IGRF version may be of reduced accuracy for years greater than 2030.",
             ) igrf(date, 1000r, deg2rad(90 - colat), deg2rad(elong))
 
             Bn = @test_logs (
                 :warn,
-                "The magnetic field computed with this IGRF version may be of reduced accuracy for years greater than 2030."
+                "The magnetic field computed with this IGRF version may be of reduced accuracy for years greater than 2030.",
             ) igrf(date, 1000r, deg2rad(90 - colat), deg2rad(elong); P = P, dP = dP)
         end
 
@@ -58,10 +58,10 @@ const igrf14_geodetic_test   = readdlm("./IGRF14_test_geodetic.txt")
         f       = norm(Ba)
 
         # Test the values.
-        @test x   ≈ xt atol = 3e-1
-        @test y   ≈ yt atol = 3e-1
-        @test z   ≈ zt atol = 3e-1
-        @test f   ≈ ft atol = 3e-1
+        @test x ≈ xt atol = 3e-1
+        @test y ≈ yt atol = 3e-1
+        @test z ≈ zt atol = 3e-1
+        @test f ≈ ft atol = 3e-1
         @test Ba == Bn
     end
 
@@ -83,27 +83,43 @@ const igrf14_geodetic_test   = readdlm("./IGRF14_test_geodetic.txt")
 
         if date <= 2030
             Ba = igrf(date, 1000h, deg2rad(90 - colat), deg2rad(elong), Val(:geodetic))
-            Bn = igrf(date, 1000h, deg2rad(90 - colat), deg2rad(elong), Val(:geodetic); P = P, dP = dP)
+            Bn = igrf(
+                date,
+                1000h,
+                deg2rad(90 - colat),
+                deg2rad(elong),
+                Val(:geodetic);
+                P = P,
+                dP = dP,
+            )
         else
             Ba = @test_logs (
                 :warn,
-                "The magnetic field computed with this IGRF version may be of reduced accuracy for years greater than 2030."
+                "The magnetic field computed with this IGRF version may be of reduced accuracy for years greater than 2030.",
             ) igrf(date, 1000h, deg2rad(90 - colat), deg2rad(elong), Val(:geodetic))
 
             Bn = @test_logs (
                 :warn,
-                "The magnetic field computed with this IGRF version may be of reduced accuracy for years greater than 2030."
-            ) igrf(date, 1000h, deg2rad(90 - colat), deg2rad(elong), Val(:geodetic); P = P, dP = dP)
+                "The magnetic field computed with this IGRF version may be of reduced accuracy for years greater than 2030.",
+            ) igrf(
+                date,
+                1000h,
+                deg2rad(90 - colat),
+                deg2rad(elong),
+                Val(:geodetic);
+                P = P,
+                dP = dP,
+            )
         end
 
         x, y, z = Ba[:]
         f       = norm(Ba)
 
         # Test the values.
-        @test x   ≈ xt atol = 3e-1
-        @test y   ≈ yt atol = 3e-1
-        @test z   ≈ zt atol = 3e-1
-        @test f   ≈ ft atol = 3e-1
+        @test x ≈ xt atol = 3e-1
+        @test y ≈ yt atol = 3e-1
+        @test z ≈ zt atol = 3e-1
+        @test f ≈ ft atol = 3e-1
         @test Ba == Bn
     end
 
@@ -113,8 +129,8 @@ const igrf14_geodetic_test   = readdlm("./IGRF14_test_geodetic.txt")
 
     # If `max_degree` is equal to or lower than 0, the results must be the same as if
     # `max_degree` is 1.
-    Bref = igrf(2020.4452, 6515e3, 0.45, -1.34; max_degree =  1)
-    B1   = igrf(2020.4452, 6515e3, 0.45, -1.34; max_degree =  0)
+    Bref = igrf(2020.4452, 6515e3, 0.45, -1.34; max_degree = 1)
+    B1   = igrf(2020.4452, 6515e3, 0.45, -1.34; max_degree = 0)
     B2   = igrf(2020.4452, 6515e3, 0.45, -1.34; max_degree = -1)
 
     @test Bref == B1
@@ -159,8 +175,8 @@ const igrf14_geodetic_test   = readdlm("./IGRF14_test_geodetic.txt")
 
     # If `max_degree` is equal or lower than 0, the results must be the same as if
     # `max_degree` is 1.
-    Bref = igrf(2020.4452, 752e3, 0.45, -1.34, Val(:geodetic); max_degree =  1)
-    B1   = igrf(2020.4452, 752e3, 0.45, -1.34, Val(:geodetic); max_degree =  0)
+    Bref = igrf(2020.4452, 752e3, 0.45, -1.34, Val(:geodetic); max_degree = 1)
+    B1   = igrf(2020.4452, 752e3, 0.45, -1.34, Val(:geodetic); max_degree = 0)
     B2   = igrf(2020.4452, 752e3, 0.45, -1.34, Val(:geodetic); max_degree = -1)
 
     @test Bref == B1
@@ -203,23 +219,23 @@ const igrf14_geodetic_test   = readdlm("./IGRF14_test_geodetic.txt")
 
     # == Float32 ===========================================================================
 
-    Bf32 = igrf(2020.4452, 6515f3, 0.45f0, -1.34f0)
+    Bf32 = igrf(2020.4452, 6515.0f3, 0.45f0, -1.34f0)
     @test eltype(Bf32) === Float32
 
-    Bf32 = igrf(2020.4452, 6515f3, 0, -1)
+    Bf32 = igrf(2020.4452, 6515.0f3, 0, -1)
     @test eltype(Bf32) === Float32
 end
 
 @testset "Function: igrf [Issues]" begin
     # Calculation close to the geographic pole.
     B = igrf(2019, 7150e3, π / 2 - 1e-15, 0.55)
-    @test B[1] ≈   908.1899663358307
-    @test B[2] ≈   173.01468080386584
+    @test B[1] ≈ 908.1899663358307
+    @test B[2] ≈ 173.01468080386584
     @test B[3] ≈ 41139.84620809845
 
     B = igrf(2019, 7150e3, π / 2, 0.55)
-    @test B[1] ≈   908.1899663358307
-    @test B[2] ≈   173.01468080386584
+    @test B[1] ≈ 908.1899663358307
+    @test B[2] ≈ 173.01468080386584
     @test B[3] ≈ 41139.84620809845
 end
 
@@ -230,21 +246,37 @@ end
     dP₁ = zeros(15, 15)
     R0  = 6378.137e3
 
-    @test_throws ArgumentError igrf(2020, 140e3, π / 4, π / 2, Val(:geodetic); P = P₀, dP = dP₀)
-    @test_throws ArgumentError igrf(2020, 140e3, π / 4, π / 2, Val(:geodetic); P = P₀, dP = dP₁)
-    @test_throws ArgumentError igrf(2020, 140e3, π / 4, π / 2, Val(:geodetic); P = P₁, dP = dP₀)
+    @test_throws ArgumentError igrf(
+        2020, 140e3, π / 4, π / 2, Val(:geodetic); P = P₀, dP = dP₀
+    )
+    @test_throws ArgumentError igrf(
+        2020, 140e3, π / 4, π / 2, Val(:geodetic); P = P₀, dP = dP₁
+    )
+    @test_throws ArgumentError igrf(
+        2020, 140e3, π / 4, π / 2, Val(:geodetic); P = P₁, dP = dP₀
+    )
     @test_nowarn igrf(2020, 140e3, π / 4, π / 2, Val(:geodetic); P = P₁, dP = dP₁)
 
-    @test_throws ArgumentError igrf(2020, R0 + 140e3, π / 4, π / 2, Val(:geocentric); P = P₀, dP = dP₀)
-    @test_throws ArgumentError igrf(2020, R0 + 140e3, π / 4, π / 2, Val(:geocentric); P = P₀, dP = dP₁)
-    @test_throws ArgumentError igrf(2020, R0 + 140e3, π / 4, π / 2, Val(:geocentric); P = P₁, dP = dP₀)
+    @test_throws ArgumentError igrf(
+        2020, R0 + 140e3, π / 4, π / 2, Val(:geocentric); P = P₀, dP = dP₀
+    )
+    @test_throws ArgumentError igrf(
+        2020, R0 + 140e3, π / 4, π / 2, Val(:geocentric); P = P₀, dP = dP₁
+    )
+    @test_throws ArgumentError igrf(
+        2020, R0 + 140e3, π / 4, π / 2, Val(:geocentric); P = P₁, dP = dP₀
+    )
     @test_nowarn igrf(2020, R0 + 140e3, π / 4, π / 2, Val(:geocentric); P = P₁, dP = dP₁)
 
     @test_throws ArgumentError igrf(1899.9, R0 + 140e3, π / 4, π / 2, Val(:geocentric))
     @test_throws ArgumentError igrf(2035.1, R0 + 140e3, π / 4, π / 2, Val(:geocentric))
 
-    @test_throws ArgumentError igrf(2020, R0 + 140e3, -π / 2 - 0.01, π / 2, Val(:geocentric))
-    @test_throws ArgumentError igrf(2020, R0 + 140e3, +π / 2 + 0.01, π / 2, Val(:geocentric))
+    @test_throws ArgumentError igrf(
+        2020, R0 + 140e3, -π / 2 - 0.01, π / 2, Val(:geocentric)
+    )
+    @test_throws ArgumentError igrf(
+        2020, R0 + 140e3, +π / 2 + 0.01, π / 2, Val(:geocentric)
+    )
     @test_throws ArgumentError igrf(2020, R0 + 140e3, π / 4, -π - 0.01, Val(:geocentric))
     @test_throws ArgumentError igrf(2020, R0 + 140e3, π / 4, +π + 0.01, Val(:geocentric))
 
@@ -283,12 +315,12 @@ end
         else
             Ba = @test_logs (
                 :warn,
-                "The magnetic field computed with this IGRF version may be of reduced accuracy for years greater than 2030."
+                "The magnetic field computed with this IGRF version may be of reduced accuracy for years greater than 2030.",
             ) igrfd(date, 1000r, 90 - colat, elong)
 
             Bn = @test_logs (
                 :warn,
-                "The magnetic field computed with this IGRF version may be of reduced accuracy for years greater than 2030."
+                "The magnetic field computed with this IGRF version may be of reduced accuracy for years greater than 2030.",
             ) igrfd(date, 1000r, 90 - colat, elong; P = P, dP = dP)
         end
 
@@ -296,10 +328,10 @@ end
         f       = norm(Ba)
 
         # Test the values.
-        @test x   ≈ xt atol = 3e-1
-        @test y   ≈ yt atol = 3e-1
-        @test z   ≈ zt atol = 3e-1
-        @test f   ≈ ft atol = 3e-1
+        @test x ≈ xt atol = 3e-1
+        @test y ≈ yt atol = 3e-1
+        @test z ≈ zt atol = 3e-1
+        @test f ≈ ft atol = 3e-1
         @test Ba == Bn
     end
 
@@ -325,12 +357,12 @@ end
         else
             Ba = @test_logs (
                 :warn,
-                "The magnetic field computed with this IGRF version may be of reduced accuracy for years greater than 2030."
+                "The magnetic field computed with this IGRF version may be of reduced accuracy for years greater than 2030.",
             ) igrfd(date, 1000h, 90 - colat, elong, Val(:geodetic))
 
             Bn = @test_logs (
                 :warn,
-                "The magnetic field computed with this IGRF version may be of reduced accuracy for years greater than 2030."
+                "The magnetic field computed with this IGRF version may be of reduced accuracy for years greater than 2030.",
             ) igrfd(date, 1000h, 90 - colat, elong, Val(:geodetic); P = P, dP = dP)
         end
 
@@ -338,10 +370,10 @@ end
         f       = norm(Ba)
 
         # Test the values.
-        @test x   ≈ xt atol = 3e-1
-        @test y   ≈ yt atol = 3e-1
-        @test z   ≈ zt atol = 3e-1
-        @test f   ≈ ft atol = 3e-1
+        @test x ≈ xt atol = 3e-1
+        @test y ≈ yt atol = 3e-1
+        @test z ≈ zt atol = 3e-1
+        @test f ≈ ft atol = 3e-1
         @test Ba == Bn
     end
 
@@ -351,8 +383,8 @@ end
 
     # If `max_degree` is equal to or lower than 0, the results must be the same as if
     # `max_degree` is 1.
-    Bref = igrfd(2020.4452, 6515e3, -19, 106; max_degree =  1)
-    B1   = igrfd(2020.4452, 6515e3, -19, 106; max_degree =  0)
+    Bref = igrfd(2020.4452, 6515e3, -19, 106; max_degree = 1)
+    B1   = igrfd(2020.4452, 6515e3, -19, 106; max_degree = 0)
     B2   = igrfd(2020.4452, 6515e3, -19, 106; max_degree = -1)
 
     @test Bref == B1
@@ -397,8 +429,8 @@ end
 
     # If `max_degree` is equal or lower than 0, the results must be the same as if
     # `max_degree` is 1.
-    Bref = igrfd(2020.4452, 752e3, -19, 106, Val(:geodetic); max_degree =  1)
-    B1   = igrfd(2020.4452, 752e3, -19, 106, Val(:geodetic); max_degree =  0)
+    Bref = igrfd(2020.4452, 752e3, -19, 106, Val(:geodetic); max_degree = 1)
+    B1   = igrfd(2020.4452, 752e3, -19, 106, Val(:geodetic); max_degree = 0)
     B2   = igrfd(2020.4452, 752e3, -19, 106, Val(:geodetic); max_degree = -1)
 
     @test Bref == B1
@@ -441,10 +473,10 @@ end
 
     # == Float32 ===========================================================================
 
-    Bf32 = igrfd(2020.4452, 6515f3, -25.0f0, -45.0f0)
+    Bf32 = igrfd(2020.4452, 6515.0f3, -25.0f0, -45.0f0)
     @test eltype(Bf32) === Float32
 
-    Bf32 = igrfd(2020.4452, 6515f3, -25, -45)
+    Bf32 = igrfd(2020.4452, 6515.0f3, -25, -45)
     @test eltype(Bf32) === Float32
 end
 
@@ -460,18 +492,24 @@ end
     @test_throws ArgumentError igrfd(2020, 140e3, 45, 90, Val(:geodetic); P = P₁, dP = dP₀)
     @test_nowarn igrfd(2020, 140e3, 45, 90, Val(:geodetic); P = P₁, dP = dP₁)
 
-    @test_throws ArgumentError igrfd(2020, R0 + 140e3, 45, 90, Val(:geocentric); P = P₀, dP = dP₀)
-    @test_throws ArgumentError igrfd(2020, R0 + 140e3, 45, 90, Val(:geocentric); P = P₀, dP = dP₁)
-    @test_throws ArgumentError igrfd(2020, R0 + 140e3, 45, 90, Val(:geocentric); P = P₁, dP = dP₀)
+    @test_throws ArgumentError igrfd(
+        2020, R0 + 140e3, 45, 90, Val(:geocentric); P = P₀, dP = dP₀
+    )
+    @test_throws ArgumentError igrfd(
+        2020, R0 + 140e3, 45, 90, Val(:geocentric); P = P₀, dP = dP₁
+    )
+    @test_throws ArgumentError igrfd(
+        2020, R0 + 140e3, 45, 90, Val(:geocentric); P = P₁, dP = dP₀
+    )
     @test_nowarn igrfd(2020, R0 + 140e3, 45, 90, Val(:geocentric); P = P₁, dP = dP₁)
 
-    @test_throws ArgumentError igrfd(2020, R0 + 140e3, -91,   90, Val(:geocentric))
-    @test_throws ArgumentError igrfd(2020, R0 + 140e3, +91,   90, Val(:geocentric))
-    @test_throws ArgumentError igrfd(2020, R0 + 140e3, +45,  181, Val(:geocentric))
+    @test_throws ArgumentError igrfd(2020, R0 + 140e3, -91, 90, Val(:geocentric))
+    @test_throws ArgumentError igrfd(2020, R0 + 140e3, +91, 90, Val(:geocentric))
+    @test_throws ArgumentError igrfd(2020, R0 + 140e3, +45, 181, Val(:geocentric))
     @test_throws ArgumentError igrfd(2020, R0 + 140e3, +45, -181, Val(:geocentric))
 
-    @test_throws ArgumentError igrfd(2020, 140e3, -91,   90, Val(:geodetic))
-    @test_throws ArgumentError igrfd(2020, 140e3, +91,   90, Val(:geodetic))
-    @test_throws ArgumentError igrfd(2020, 140e3, +45,  181, Val(:geodetic))
+    @test_throws ArgumentError igrfd(2020, 140e3, -91, 90, Val(:geodetic))
+    @test_throws ArgumentError igrfd(2020, 140e3, +91, 90, Val(:geodetic))
+    @test_throws ArgumentError igrfd(2020, 140e3, +45, 181, Val(:geodetic))
     @test_throws ArgumentError igrfd(2020, 140e3, +45, -181, Val(:geodetic))
 end

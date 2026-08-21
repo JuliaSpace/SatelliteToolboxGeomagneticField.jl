@@ -10,6 +10,8 @@
 #
 ############################################################################################
 
+#! format: off
+
 # IGRF reference radius.
 const _IGRF_A = 6371.2
 
@@ -233,3 +235,5 @@ const _IGRF_MAX_DEGREE = 13
 
 # Pre-compute Legendre coefficients.
 const _IGRF_LEGENDRE_COEFFICIENTS = LegendreCoefficients(Val(:schmidt), _IGRF_MAX_DEGREE)
+
+#! format: on

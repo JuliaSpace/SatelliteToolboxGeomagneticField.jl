@@ -99,7 +99,7 @@ function igrfd(
     show_warnings::Bool = true,
     verbose::Val{verbosity} = Val(true),
     P::Union{Nothing, AbstractMatrix} = nothing,
-    dP::Union{Nothing, AbstractMatrix} = nothing
+    dP::Union{Nothing, AbstractMatrix} = nothing,
 ) where {verbosity}
     return igrfd(
         date,
@@ -111,7 +111,7 @@ function igrfd(
         show_warnings = show_warnings,
         verbose = Val(verbosity),
         P = P,
-        dP = dP
+        dP = dP,
     )
 end
 
@@ -125,9 +125,8 @@ function igrfd(
     show_warnings::Bool = true,
     verbose::Val{verbosity} = Val(true),
     P::Union{Nothing, AbstractMatrix} = nothing,
-    dP::Union{Nothing, AbstractMatrix} = nothing
-) where {T1<:Number, T2<:Number, T3<:Number, verbosity}
-
+    dP::Union{Nothing, AbstractMatrix} = nothing,
+) where {T1 <: Number, T2 <: Number, T3 <: Number, verbosity}
     T = promote_type(T1, T2, T3) |> float
 
     # Check if the latitude and longitude are valid.
@@ -149,7 +148,7 @@ function igrfd(
         show_warnings = show_warnings,
         verbose = Val(verbosity),
         P = P,
-        dP = dP
+        dP = dP,
     )
 end
 
@@ -163,9 +162,8 @@ function igrfd(
     show_warnings::Bool = true,
     verbose::Val{verbosity} = Val(true),
     P::Union{Nothing, AbstractMatrix} = nothing,
-    dP::Union{Nothing, AbstractMatrix} = nothing
-) where {T1<:Number, T2<:Number, T3<:Number, verbosity}
-
+    dP::Union{Nothing, AbstractMatrix} = nothing,
+) where {T1 <: Number, T2 <: Number, T3 <: Number, verbosity}
     T = promote_type(T1, T2, T3) |> float
 
     # Check if the latitude and longitude are valid.
@@ -187,7 +185,7 @@ function igrfd(
         show_warnings = show_warnings,
         verbose = Val(verbosity),
         P = P,
-        dP = dP
+        dP = dP,
     )
 end
 
@@ -274,7 +272,7 @@ function igrf(
     show_warnings::Bool = true,
     verbose::Val{verbosity} = Val(true),
     P::Union{Nothing, AbstractMatrix} = nothing,
-    dP::Union{Nothing, AbstractMatrix} = nothing
+    dP::Union{Nothing, AbstractMatrix} = nothing,
 ) where {verbosity}
     return igrf(
         date,
@@ -286,7 +284,7 @@ function igrf(
         show_warnings = show_warnings,
         verbose = Val(verbosity),
         P = P,
-        dP = dP
+        dP = dP,
     )
 end
 
@@ -300,9 +298,8 @@ function igrf(
     show_warnings::Bool = true,
     verbose::Val{verbosity} = Val(true),
     P::Union{Nothing, AbstractMatrix} = nothing,
-    dP::Union{Nothing, AbstractMatrix} = nothing
-) where {T1<:Number, T2<:Number, T3<:Number, verbosity}
-
+    dP::Union{Nothing, AbstractMatrix} = nothing,
+) where {T1 <: Number, T2 <: Number, T3 <: Number, verbosity}
     T = promote_type(T1, T2, T3) |> float
 
     # == Input Verification ================================================================
@@ -310,9 +307,11 @@ function igrf(
     # Check the date, since this model is valid for years between 1900 and
     # `_IGRF_LAST_YEAR`.
     if (date < 1900) || (date > _IGRF_LAST_YEAR)
-        throw(ArgumentError(
-            "This IGRF version will not work for years outside the interval [1900, $_IGRF_LAST_YEAR]."
-        ))
+        throw(
+            ArgumentError(
+                "This IGRF version will not work for years outside the interval [1900, $_IGRF_LAST_YEAR].",
+            ),
+        )
     end
 
     # Check if the latitude and longitude are valid.
@@ -327,7 +326,9 @@ function igrf(
     # Warn the user that for dates after the year `_IGRF_RELIABLE_YEAR` the accuracy may be
     # reduced.
     if show_warnings && (date > _IGRF_RELIABLE_YEAR)
-        verbosity && @warn("The magnetic field computed with this IGRF version may be of reduced accuracy for years greater than $_IGRF_RELIABLE_YEAR.")
+        verbosity && @warn(
+            "The magnetic field computed with this IGRF version may be of reduced accuracy for years greater than $_IGRF_RELIABLE_YEAR."
+        )
     end
 
     # If the `max_degree` is equal or lower than 0, we must clamp it to 1.
@@ -372,7 +373,11 @@ function igrf(
         rows, cols = size(P)
 
         if (rows < n_max + 1) || (cols < n_max + 1)
-            throw(ArgumentError("Matrix `P` must have at least $(n_max + 1) rows and columns."))
+            throw(
+                ArgumentError(
+                    "Matrix `P` must have at least $(n_max + 1) rows and columns."
+                ),
+            )
         end
     end
 
@@ -385,22 +390,18 @@ function igrf(
         rows, cols = size(dP)
 
         if (rows < n_max + 1) || (cols < n_max + 1)
-            throw(ArgumentError("Matrix `dP` must have at least $(n_max + 1) rows and columns."))
+            throw(
+                ArgumentError(
+                    "Matrix `dP` must have at least $(n_max + 1) rows and columns."
+                ),
+            )
         end
     end
 
     # == Geomagnetic Potential Gradient ====================================================
 
     dVr, dVϕ, dVθ = _igrf_geomagnetic_potential_gradient(
-        n_max,
-        idx,
-        r_km,
-        θ,
-        ϕ,
-        Δt,
-        date >= _IGRF_LAST_YEAR_WITH_MEASUREMENTS,
-        P,
-        dP,
+        n_max, idx, r_km, θ, ϕ, Δt, date >= _IGRF_LAST_YEAR_WITH_MEASUREMENTS, P, dP
     )
 
     # == Compute the Geomagnetic Field Vector in the Geocentric Reference Frame ============
@@ -424,7 +425,7 @@ function igrf(
     show_warnings::Bool = true,
     verbose::Val{verbosity} = Val(true),
     P::Union{Nothing, AbstractMatrix} = nothing,
-    dP::Union{Nothing, AbstractMatrix} = nothing
+    dP::Union{Nothing, AbstractMatrix} = nothing,
 ) where {verbosity}
 
     # TODO: This method has a small error (≈ 0.01 nT) compared with the `igrf12syn`.
@@ -458,7 +459,7 @@ function igrf(
         show_warnings = show_warnings,
         verbose = Val(verbosity),
         P = P,
-        dP = dP
+        dP = dP,
     )
 
     # Convert to geodetic coordinates.
@@ -515,16 +516,16 @@ function _igrf_geomagnetic_potential_gradient(
     extrapolate::Bool,
     P::AbstractMatrix,
     dP::AbstractMatrix,
-) where T<:Number
+) where {T <: Number}
     # Auxiliary variables to select the IGRF coefficients.
     a = T(_IGRF_A)
     H = _IGRF_H
     G = _IGRF_G
 
     # Auxiliary variables to improve computational speed.
-    sin_ϕ,  cos_ϕ  = sincos(ϕ)
+    sin_ϕ, cos_ϕ = sincos(ϕ)
     ratio = a / r_km
-    fact  = ratio
+    fact = ratio
 
     # == Initialization of Variables =======================================================
 
@@ -564,8 +565,8 @@ function _igrf_geomagnetic_potential_gradient(
             ΔG = T(G[kg, end])
         end
 
-        Gnm  = Gnm_e0 + ΔG * Δt
-        kg  += 1
+        Gnm = Gnm_e0 + ΔG * Δt
+        kg += 1
 
         aux_dVr += -(n + 1) / r_km * Gnm * P[n + 1, 1]
         aux_dVθ += Gnm * dP[n + 1, 1]
@@ -616,8 +617,8 @@ function _igrf_geomagnetic_potential_gradient(
                 ΔH = T(H[kh, end])
             end
 
-            Gnm  = Gnm_e0 + ΔG * Δt
-            Hnm  = Hnm_e0 + ΔH * Δt
+            Gnm = Gnm_e0 + ΔG * Δt
+            Hnm = Hnm_e0 + ΔH * Δt
             kg  += 1
             kh  += 1
 
@@ -626,7 +627,7 @@ function _igrf_geomagnetic_potential_gradient(
 
             # == Compute the Contributions for `m` =========================================
 
-            P_nm  =  P[n + 1, m + 1]
+            P_nm  = P[n + 1, m + 1]
             dP_nm = dP[n + 1, m + 1]
 
             aux_dVr += -fact_dVr * GcHs_nm * P_nm
