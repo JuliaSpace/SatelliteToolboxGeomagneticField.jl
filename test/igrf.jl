@@ -247,6 +247,11 @@ end
     @test_throws ArgumentError igrf(2020, R0 + 140e3, +π / 2 + 0.01, π / 2, Val(:geocentric))
     @test_throws ArgumentError igrf(2020, R0 + 140e3, π / 4, -π - 0.01, Val(:geocentric))
     @test_throws ArgumentError igrf(2020, R0 + 140e3, π / 4, +π + 0.01, Val(:geocentric))
+
+    @test_throws ArgumentError igrf(2020, 140e3, -π / 2 - 0.01, π / 2, Val(:geodetic))
+    @test_throws ArgumentError igrf(2020, 140e3, +π / 2 + 0.01, π / 2, Val(:geodetic))
+    @test_throws ArgumentError igrf(2020, 140e3, π / 4, -π - 0.01, Val(:geodetic))
+    @test_throws ArgumentError igrf(2020, 140e3, π / 4, +π + 0.01, Val(:geodetic))
 end
 
 # -- Function: igrfd -----------------------------------------------------------------------
@@ -464,4 +469,9 @@ end
     @test_throws ArgumentError igrfd(2020, R0 + 140e3, +91,   90, Val(:geocentric))
     @test_throws ArgumentError igrfd(2020, R0 + 140e3, +45,  181, Val(:geocentric))
     @test_throws ArgumentError igrfd(2020, R0 + 140e3, +45, -181, Val(:geocentric))
+
+    @test_throws ArgumentError igrfd(2020, 140e3, -91,   90, Val(:geodetic))
+    @test_throws ArgumentError igrfd(2020, 140e3, +91,   90, Val(:geodetic))
+    @test_throws ArgumentError igrfd(2020, 140e3, +45,  181, Val(:geodetic))
+    @test_throws ArgumentError igrfd(2020, 140e3, +45, -181, Val(:geodetic))
 end

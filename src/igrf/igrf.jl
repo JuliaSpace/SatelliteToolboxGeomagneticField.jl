@@ -163,6 +163,15 @@ function igrfd(
 
     T = promote_type(T1, T2, T3) |> float
 
+    # Check if the latitude and longitude are valid.
+    if (λ < -90) || (λ > 90)
+        throw(ArgumentError("The latitude must be between -90° and +90°."))
+    end
+
+    if (Ω < -180) || (Ω > 180)
+        throw(ArgumentError("The longitude must be between -180° and +180°."))
+    end
+
     return igrf(
         date,
         T(h),
@@ -411,6 +420,17 @@ function igrf(
     # does not seem to be an error in the conversion from geodetic to geocentric
     # coordinates. This is probably caused by a numerical error. Further verification is
     # necessary.
+
+    T = promote_type(typeof(h), typeof(λ), typeof(Ω)) |> float
+
+    # Check if the latitude and longitude are valid.
+    if (λ < -T(π) / 2) || (λ > T(π) / 2)
+        throw(ArgumentError("The latitude must be between -π / 2 and +π / 2 rad."))
+    end
+
+    if (Ω < -T(π)) || (Ω > T(π))
+        throw(ArgumentError("The longitude must be between -π and +π rad."))
+    end
 
     # Convert the geodetic coordinates to geocentric coordinates.
     λ_gc, r = geodetic_to_geocentric(λ, h)
