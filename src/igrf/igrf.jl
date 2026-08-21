@@ -506,8 +506,8 @@ function _igrf_geomagnetic_potential_gradient(
 
     # Compute the Schmidt quasi-normalized associated Legendre functions and their first
     # order derivative, neglecting the phase term.
-    legendre!(Val(:schmidt), P, θ, n_max, n_max; ph_term = false)
-    dlegendre!(Val(:schmidt), dP, θ, P, n_max, n_max; ph_term = false)
+    legendre!(P, θ, _IGRF_LEGENDRE_COEFFICIENTS; ph_term = false)
+    dlegendre!(dP, θ, P, _IGRF_LEGENDRE_COEFFICIENTS; ph_term = false)
 
     @inbounds for n in 1:n_max
         aux_dVr = T(0)
