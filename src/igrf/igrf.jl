@@ -127,11 +127,11 @@ function igrfd(
 
     # Check if the latitude and longitude are valid.
     if (λ_gc < -90) || (λ_gc > 90)
-        throw(ArgumentError("The latitude must be between -90° and +90° rad."))
+        throw(ArgumentError("The latitude must be between -90° and +90°."))
     end
 
     if (Ω < -180) || (Ω > 180)
-        throw(ArgumentError("The longitude must be between -180° and +180° rad."))
+        throw(ArgumentError("The longitude must be between -180° and +180°."))
     end
 
     return igrf(
@@ -300,7 +300,7 @@ function igrf(
     # Check the data, since this model is valid for years between 1900 and `max_year`.
     if (date < 1900) || (date > _IGRF_LAST_YEAR)
         throw(ArgumentError(
-            "This IGRF version will not work for years outside the interval [1900, $_IGRF_LAST_YEAR)."
+            "This IGRF version will not work for years outside the interval [1900, $_IGRF_LAST_YEAR]."
         ))
     end
 
