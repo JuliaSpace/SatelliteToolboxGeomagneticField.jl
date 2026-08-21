@@ -1,6 +1,26 @@
 SatelliteToolboxGeomagneticField.jl Changelog
 =============================================
 
+Version 1.3.1
+-------------
+
+- ![Enhancement][badge-enhancement] The maximum degree and order are now passed explicitly
+  to the associated Legendre functions. This modification fixes an error when the matrices
+  `P` and `dP` were larger than `14 × 14` and improves the performance when `max_degree` is
+  lower than 13.
+- ![Enhancement][badge-enhancement] The package now has a precompilation workload, highly
+  reducing the time to first call of `igrf`, `igrfd`, and `geomagnetic_dipole_field`.
+- ![Bugfix][badge-bugfix] The function `geomagnetic_dipole_field` was not working with
+  vectors of integers, although the documentation stated that the input element type is
+  converted to a float.
+- ![Bugfix][badge-bugfix] The geodetic methods of `igrf` and `igrfd` were not validating
+  the input latitude and longitude, silently returning meaningless results for values
+  outside the valid range.
+- ![Bugfix][badge-bugfix] Some error messages contained wrong information about the input
+  units and the accepted date interval.
+- ![Info][badge-info] The documentation received several fixes, including outdated examples
+  in README.md that called a function that no longer exists.
+
 Version 1.3.0
 -------------
 
@@ -50,12 +70,12 @@ Version 0.1.0
 - Initial version.
   - This version was based on the code in **SatelliteToolbox.jl**.
 
-[badge-breaking]: https://img.shields.io/badge/BREAKING-red.svg
-[badge-deprecation]: https://img.shields.io/badge/Deprecation-orange.svg
-[badge-feature]: https://img.shields.io/badge/Feature-green.svg
-[badge-enhancement]: https://img.shields.io/badge/Enhancement-blue.svg
-[badge-bugfix]: https://img.shields.io/badge/Bugfix-purple.svg
-[badge-info]: https://img.shields.io/badge/Info-gray.svg
+[badge-breaking]: https://img.shields.io/badge/Breaking-DC2626?style=flat-square
+[badge-deprecation]: https://img.shields.io/badge/Deprecation-D97706?style=flat-square
+[badge-feature]: https://img.shields.io/badge/Feature-16A34A?style=flat-square
+[badge-enhancement]: https://img.shields.io/badge/Enhancement-0284C7?style=flat-square
+[badge-bugfix]: https://img.shields.io/badge/Bugfix-DB2777?style=flat-square
+[badge-info]: https://img.shields.io/badge/Info-475569?style=flat-square
 
 [gh-issue-3]: https://github.com/JuliaSpace/SatelliteToolboxGeomagneticField.jl/issues/3
 
