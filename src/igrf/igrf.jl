@@ -505,9 +505,12 @@ function _igrf_geomagnetic_potential_gradient(
     kh  = 1     # ............................ Index to obtain the values of the matrix `H`.
 
     # Compute the Schmidt quasi-normalized associated Legendre functions and their first
-    # order derivative, neglecting the phase term.
-    legendre!(P, θ, _IGRF_LEGENDRE_COEFFICIENTS; ph_term = false)
-    dlegendre!(dP, θ, P, _IGRF_LEGENDRE_COEFFICIENTS; ph_term = false)
+    # order derivative, neglecting the phase term. We must pass the maximum degree and
+    # order explicitly. Otherwise, those functions will infer them from the matrix
+    # dimensions, leading to unnecessary computations or even errors if the user passes
+    # matrices larger than `n_max + 1 × n_max + 1`.
+    legendre!(P, θ, _IGRF_LEGENDRE_COEFFICIENTS, n_max, n_max; ph_term = false)
+    dlegendre!(dP, θ, P, _IGRF_LEGENDRE_COEFFICIENTS, n_max, n_max; ph_term = false)
 
     @inbounds for n in 1:n_max
         aux_dVr = T(0)

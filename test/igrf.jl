@@ -145,6 +145,16 @@ const igrf14_geodetic_test   = readdlm("./IGRF14_test_geodetic.txt")
 
     @test B1 == Bref
 
+    # Matrices larger than `max_degree + 1 × max_degree + 1` must also be supported and
+    # must not change the result.
+    Pbig  = zeros(20, 20)
+    dPbig = zeros(20, 20)
+
+    Bref = igrf(2020.4452, 6515e3, 0.45, -1.34)
+    B1   = igrf(2020.4452, 6515e3, 0.45, -1.34; P = Pbig, dP = dPbig)
+
+    @test B1 == Bref
+
     # -- Geodetic --------------------------------------------------------------------------
 
     # If `max_degree` is equal or lower than 0, the results must be the same as if
@@ -178,6 +188,16 @@ const igrf14_geodetic_test   = readdlm("./IGRF14_test_geodetic.txt")
 
     Bref = igrf(2020.4452, 752e3, 0.45, -1.34, Val(:geodetic); max_degree = 4)
     B1   = igrf(2020.4452, 752e3, 0.45, -1.34, Val(:geodetic); P = Pred, dP = dPred, max_degree = 4)
+
+    @test B1 == Bref
+
+    # Matrices larger than `max_degree + 1 × max_degree + 1` must also be supported and
+    # must not change the result.
+    Pbig  = zeros(20, 20)
+    dPbig = zeros(20, 20)
+
+    Bref = igrf(2020.4452, 752e3, 0.45, -1.34, Val(:geodetic))
+    B1   = igrf(2020.4452, 752e3, 0.45, -1.34, Val(:geodetic); P = Pbig, dP = dPbig)
 
     @test B1 == Bref
 
@@ -358,6 +378,16 @@ end
 
     @test B1 == Bref
 
+    # Matrices larger than `max_degree + 1 × max_degree + 1` must also be supported and
+    # must not change the result.
+    Pbig  = zeros(20, 20)
+    dPbig = zeros(20, 20)
+
+    Bref = igrfd(2020.4452, 6515e3, -19, 106)
+    B1   = igrfd(2020.4452, 6515e3, -19, 106; P = Pbig, dP = dPbig)
+
+    @test B1 == Bref
+
     # -- Geodetic --------------------------------------------------------------------------
 
     # If `max_degree` is equal or lower than 0, the results must be the same as if
@@ -391,6 +421,16 @@ end
 
     Bref = igrfd(2020.4452, 752e3, -19, 106, Val(:geodetic); max_degree = 4)
     B1   = igrfd(2020.4452, 752e3, -19, 106, Val(:geodetic); P = Pred, dP = dPred, max_degree = 4)
+
+    @test B1 == Bref
+
+    # Matrices larger than `max_degree + 1 × max_degree + 1` must also be supported and
+    # must not change the result.
+    Pbig  = zeros(20, 20)
+    dPbig = zeros(20, 20)
+
+    Bref = igrfd(2020.4452, 752e3, -19, 106, Val(:geodetic))
+    B1   = igrfd(2020.4452, 752e3, -19, 106, Val(:geodetic); P = Pbig, dP = dPbig)
 
     @test B1 == Bref
 
