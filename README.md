@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="./docs/src/assets/logo.png" width="150" title="SatelliteToolboxTransformations.jl"><br>
+  <img src="./docs/src/assets/logo.png" width="150" title="SatelliteToolboxGeomagneticField.jl"><br>
   <small><i>This package is part of the <a href="https://github.com/JuliaSpace/SatelliteToolbox.jl">SatelliteToolbox.jl</a> ecosystem.</i></small>
 </p>
 
@@ -11,7 +11,7 @@
 [![License](https://img.shields.io/github/license/JuliaSpace/SatelliteToolboxGeomagneticField.jl?style=flat-square&logo=readme&logoColor=white&labelColor=475569&color=0284C7)](https://github.com/JuliaSpace/SatelliteToolboxGeomagneticField.jl/blob/main/LICENSE)
 [![DOI](https://img.shields.io/badge/DOI-10.5281%2Fzenodo.11246300-DB2777?style=flat-square&logo=doi&logoColor=white&labelColor=475569)](https://zenodo.org/doi/10.5281/zenodo.11246300)
 
-This packages contains models to compute the geomagnetic field vector. We currently have two
+This package contains models to compute the geomagnetic field vector. We currently have two
 models implemented:
 
 1. The [International Geomagnetic Reference Field (IGRF)
@@ -31,7 +31,7 @@ julia> Pkg.add("SatelliteToolboxGeomagneticField")
 
 We have a native Julia implementation of the [International Geomagnetic Reference Field
 (IGRF) v14](https://www.ncei.noaa.gov/products/international-geomagnetic-reference-field)
-based on **[1]**. This mode can be accessed by two functions: `igrf` and `igrfd`.
+based on **[1]**. This model can be accessed by two functions: `igrf` and `igrfd`.
 
 ```julia
 function igrfd(date::Number, <r, h>::Number, λ::Number, Ω::Number[, R]; kwargs...)
@@ -72,7 +72,7 @@ The following keywords are available:
 
 - `max_degree::Int`: Maximum degree used in the spherical harmonics when computing the
     geomagnetic field. If it is higher than the available number of coefficients in the IGRF
-    matrices, it will be clamped. If it is equal of lower than 0, it will be set to 1.
+    matrices, it will be clamped. If it is equal to or lower than 0, it will be set to 1.
     (**Default** = 13)
 - `show_warnings::Bool`: Show warnings about the data (**Default** = `true`).
 - `P::Union{Nothing, AbstractMatrix}`: An optional matrix that must contain at least
@@ -104,7 +104,7 @@ be **geocentric** coordinates:
 
 If `R` is `Val(:geodetic)`, the input must be **geodetic** coordinates:
 
-1. Altitude above the reference ellipsoid `h` (WGS-84) \\[m];
+1. Altitude above the reference ellipsoid `h` (WGS-84) [m];
 2. Geodetic latitude `λ` ∈ (-π / 2, +π / 2) [rad]; and
 3. Geodetic longitude `Ω` ∈ (-π, +π) [rad].
 
@@ -126,7 +126,7 @@ The following keywords are available:
 
 - `max_degree::Int`: Maximum degree used in the spherical harmonics when computing the
     geomagnetic field. If it is higher than the available number of coefficients in the IGRF
-    matrices, it will be clamped. If it is equal of lower than 0, it will be set to 1.
+    matrices, it will be clamped. If it is equal to or lower than 0, it will be set to 1.
     (**Default** = 13)
 - `show_warnings::Bool`: Show warnings about the data (**Default** = `true`).
 - `P::Union{Nothing, AbstractMatrix}`: An optional matrix that must contain at least
@@ -219,33 +219,35 @@ Notice that:
 
 1. The output vector will be represented in the ECEF reference frame.
 2. The returned vector type is obtained by converting `T` to a float.
-3. The south geomagnetic pole position and dipole moment is obtained by interpolating the
+3. The south geomagnetic pole position and dipole moment are obtained by interpolating the
     values provided in **[2]**.
 
 ```julia
+julia> R0 = 6378.137e3;
+
 julia> r_e = [0; 0; R0 + 200e3];
 
-julia> geomag_dipole(r_e)
+julia> geomagnetic_dipole_field(r_e)
 3-element StaticArraysCore.SVector{3, Float64} with indices SOneTo(3):
-   1286.0242861717802
-  -4232.804339060699
- -53444.68086319672
+   1301.6719081615724
+  -4179.187349236483
+ -53460.041620751326
 
-julia> geomag_dipole(r_e, 1986)
+julia> geomagnetic_dipole_field(r_e, 1986)
 3-element StaticArraysCore.SVector{3, Float64} with indices SOneTo(3):
    1715.2656071053527
   -4964.59806084178
  -54246.30480714959
 
-julia> r_e = [R0+200e3;0;0];
+julia> r_e = [R0 + 200e3; 0; 0];
 
-julia> geomag_dipole(r_e)
+julia> geomagnetic_dipole_field(r_e)
 3-element StaticArraysCore.SVector{3, Float64} with indices SOneTo(3):
- -2572.0485723435604
- -4232.804339060699
- 26722.34043159836
+ -2603.343816323145
+ -4179.187349236483
+ 26730.020810375663
 
-julia> geomag_dipole(r_e, 1986)
+julia> geomagnetic_dipole_field(r_e, 1986)
 3-element StaticArraysCore.SVector{3, Float64} with indices SOneTo(3):
  -3430.5312142107055
  -4964.59806084178
