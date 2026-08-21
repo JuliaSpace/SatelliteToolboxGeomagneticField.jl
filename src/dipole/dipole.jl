@@ -11,7 +11,7 @@
 export geomagnetic_dipole_field
 
 """
-    geomagnetic_dipole_field(r_e::AbstractVector{T}, year::Number = 2020) where T -> SVector{3, T}
+    geomagnetic_dipole_field(r_e::AbstractVector{T}, year::Number = 2020) where T -> SVector{3, float(T)}
 
 Compute the geomagnetic field [nT] using the simplified dipole model at position `r_e` (ECEF
 reference frame) [m]. This function uses the year `year` to obtain the position of the South
@@ -30,23 +30,26 @@ omitted, it defaults to 2020.
 - **[1]**: http://wdc.kugi.kyoto-u.ac.jp/poles/polesexp.html
 """
 function geomagnetic_dipole_field(r_e::AbstractVector{T}, year::Number = 2020) where T
+    # Convert the input type to a float to support, e.g., vectors of integers.
+    Tf = float(T)
+
     # Obtain the geomagnetic dipole coefficients.
-    pole_lat, pole_lon, m = _geomagnetic_dipole_coefficients(year::Number)
+    pole_lat, pole_lon, m = _geomagnetic_dipole_coefficients(year)
 
     # DCM that converts the ECEF into the geomagnetic coordinates.
-    Dge = angle_to_dcm(T(pole_lon), T(π / 2) - T(pole_lat), :ZY)
+    Dge = angle_to_dcm(Tf(pole_lon), Tf(π / 2) - Tf(pole_lat), :ZY)
 
     # Compute the dipole momentum represented in the ECEF reference frame.
-    k₀_e = T(1e-7) * T(m) * (Dge' * SVector{3, T}(0, 0, -1))
+    k₀_e = Tf(1e-7) * Tf(m) * (Dge' * SVector{3, Tf}(0, 0, -1))
 
     # Compute the distance from the Earth center of the desired point.
     r = norm(r_e)
 
     # Compute the unitary vector that points to the desired direction.
-    er_e = SVector{3, T}(r_e[1], r_e[2], r_e[3]) / r
+    er_e = SVector{3, Tf}(r_e[1], r_e[2], r_e[3]) / r
 
     # Compute the geomagnetic field vector [nT].
-    B_e = (3er_e * er_e' - I) * k₀_e * T(1e9) / r^3
+    B_e = (3er_e * er_e' - I) * k₀_e * Tf(1e9) / r^3
 
     return B_e
 end

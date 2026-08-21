@@ -71,6 +71,18 @@
     @test B_e_expected ≈ B_e_result_f32 atol = 1e-1
     @test eltype(B_e_result_f32) === Float32
 
+    # == Test 3 ============================================================================
+    #
+    # Integer input vectors must be supported, and the result must be promoted to float.
+
+    r_int = SVector{3, Int}(0, 0, 7_000_000)
+
+    B_e_result_int = geomagnetic_dipole_field(r_int, year)
+    B_e_result_f64 = geomagnetic_dipole_field(Float64.(r_int), year)
+
+    @test B_e_result_int == B_e_result_f64
+    @test eltype(B_e_result_int) === Float64
+
     # == Test Extrapolation ================================================================
 
     r_e = R0 * (@SVector rand(3))
