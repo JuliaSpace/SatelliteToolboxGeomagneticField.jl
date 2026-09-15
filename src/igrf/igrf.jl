@@ -89,95 +89,17 @@ If `R` is omitted, it defaults to `Val(:geocentric)`.
 """
 function igrfd(
     date::Number,
-    r::Number,
-    λ_gc::Number,
-    Ω::Number;
-    max_degree::Int = _IGRF_MAX_DEGREE,
-    show_warnings::Val{S} = Val(true),
-    P::Union{Nothing, AbstractMatrix} = nothing,
-    dP::Union{Nothing, AbstractMatrix} = nothing,
-) where {S}
-    return igrfd(
-        date,
-        r,
-        λ_gc,
-        Ω,
-        Val(:geocentric);
-        max_degree = max_degree,
-        show_warnings = show_warnings,
-        P = P,
-        dP = dP,
-    )
-end
-
-function igrfd(
-    date::Number,
     r::T1,
-    λ_gc::T2,
-    Ω::T3,
-    ::Val{:geocentric};
-    max_degree::Int = _IGRF_MAX_DEGREE,
-    show_warnings::Val{S} = Val(true),
-    P::Union{Nothing, AbstractMatrix} = nothing,
-    dP::Union{Nothing, AbstractMatrix} = nothing,
-) where {T1 <: Number, T2 <: Number, T3 <: Number, S}
-    T = promote_type(T1, T2, T3) |> float
-
-    # Check if the latitude and longitude are valid.
-    if (λ_gc < -90) || (λ_gc > 90)
-        throw(ArgumentError("The latitude must be between -90° and +90°."))
-    end
-
-    if (Ω < -180) || (Ω > 180)
-        throw(ArgumentError("The longitude must be between -180° and +180°."))
-    end
-
-    return igrf(
-        date,
-        T(r),
-        deg2rad(T(λ_gc)),
-        deg2rad(T(Ω)),
-        Val(:geocentric);
-        max_degree = max_degree,
-        show_warnings = show_warnings,
-        P = P,
-        dP = dP,
-    )
-end
-
-function igrfd(
-    date::Number,
-    h::T1,
     λ::T2,
     Ω::T3,
-    ::Val{:geodetic};
-    max_degree::Int = _IGRF_MAX_DEGREE,
-    show_warnings::Val{S} = Val(true),
-    P::Union{Nothing, AbstractMatrix} = nothing,
-    dP::Union{Nothing, AbstractMatrix} = nothing,
-) where {T1 <: Number, T2 <: Number, T3 <: Number, S}
+    R::Union{Val{:geocentric}, Val{:geodetic}} = Val(:geocentric);
+    kwargs...,
+) where {T1 <: Number, T2 <: Number, T3 <: Number}
     T = promote_type(T1, T2, T3) |> float
 
-    # Check if the latitude and longitude are valid.
-    if (λ < -90) || (λ > 90)
-        throw(ArgumentError("The latitude must be between -90° and +90°."))
-    end
+    _check_latitude_and_longitude(λ, Ω, Val(:deg))
 
-    if (Ω < -180) || (Ω > 180)
-        throw(ArgumentError("The longitude must be between -180° and +180°."))
-    end
-
-    return igrf(
-        date,
-        T(h),
-        deg2rad(T(λ)),
-        deg2rad(T(Ω)),
-        Val(:geodetic);
-        max_degree = max_degree,
-        show_warnings = show_warnings,
-        P = P,
-        dP = dP,
-    )
+    return igrf(date, T(r), deg2rad(T(λ)), deg2rad(T(Ω)), R; kwargs...)
 end
 
 """
@@ -251,27 +173,8 @@ If `R` is omitted, it defaults to `Val(:geocentric)`.
 
     The output type `T` is obtained by promoting `T1`, `T2`, and `T3` to a float.
 """
-function igrf(
-    date::Number,
-    r::Number,
-    λ_gc::Number,
-    Ω::Number;
-    max_degree::Int = _IGRF_MAX_DEGREE,
-    show_warnings::Val{S} = Val(true),
-    P::Union{Nothing, AbstractMatrix} = nothing,
-    dP::Union{Nothing, AbstractMatrix} = nothing,
-) where {S}
-    return igrf(
-        date,
-        r,
-        λ_gc,
-        Ω,
-        Val(:geocentric);
-        max_degree = max_degree,
-        show_warnings = show_warnings,
-        P = P,
-        dP = dP,
-    )
+function igrf(date::Number, r::Number, λ::Number, Ω::Number; kwargs...)
+    return igrf(date, r, λ, Ω, Val(:geocentric); kwargs...)
 end
 
 function igrf(
@@ -299,14 +202,7 @@ function igrf(
         )
     end
 
-    # Check if the latitude and longitude are valid.
-    if (λ < -T(π)/2) || (λ > T(π)/2)
-        throw(ArgumentError("The latitude must be between -π / 2 and +π / 2 rad."))
-    end
-
-    if (Ω < -T(π)) || (Ω > T(π))
-        throw(ArgumentError("The longitude must be between -π and +π rad."))
-    end
+    _check_latitude_and_longitude(λ, Ω, Val(:rad))
 
     # Warn the user that for dates after the year `_IGRF_RELIABLE_YEAR` the accuracy may be
     # reduced.
@@ -433,14 +329,7 @@ function igrf(
 
     T = promote_type(typeof(h), typeof(λ), typeof(Ω)) |> float
 
-    # Check if the latitude and longitude are valid.
-    if (λ < -T(π) / 2) || (λ > T(π) / 2)
-        throw(ArgumentError("The latitude must be between -π / 2 and +π / 2 rad."))
-    end
-
-    if (Ω < -T(π)) || (Ω > T(π))
-        throw(ArgumentError("The longitude must be between -π and +π rad."))
-    end
+    _check_latitude_and_longitude(λ, Ω, Val(:rad))
 
     # Convert the geodetic coordinates to geocentric coordinates. The conversion can promote
     # the values to the type of the ellipsoid parameters. Hence, we must convert the result
@@ -470,6 +359,41 @@ end
 ############################################################################################
 #                                    Private Functions                                     #
 ############################################################################################
+
+"""
+    _check_latitude_and_longitude(λ::Number, Ω::Number, ::Val{:rad}) -> Nothing
+    _check_latitude_and_longitude(λ::Number, Ω::Number, ::Val{:deg}) -> Nothing
+
+Throw an `ArgumentError` if the latitude `λ` is outside the interval [-π / 2, +π / 2] rad or
+if the longitude `Ω` is outside the interval [-π, +π] rad. If the last argument is
+`Val(:deg)`, the same verification is performed considering that the inputs are in degrees.
+
+The limits are converted to the floating-point type of the inputs before the comparison so
+that, e.g., `Float32(π) / 2` is accepted as a valid Float32 latitude.
+"""
+function _check_latitude_and_longitude(λ::Number, Ω::Number, ::Val{:rad})
+    if abs(λ) > oftype(float(λ), π) / 2
+        throw(ArgumentError("The latitude must be between -π / 2 and +π / 2 rad."))
+    end
+
+    if abs(Ω) > oftype(float(Ω), π)
+        throw(ArgumentError("The longitude must be between -π and +π rad."))
+    end
+
+    return nothing
+end
+
+function _check_latitude_and_longitude(λ::Number, Ω::Number, ::Val{:deg})
+    if abs(λ) > 90
+        throw(ArgumentError("The latitude must be between -90° and +90°."))
+    end
+
+    if abs(Ω) > 180
+        throw(ArgumentError("The longitude must be between -180° and +180°."))
+    end
+
+    return nothing
+end
 
 """
     _igrf_geomagnetic_potential_gradient(n_max::Int, idx::Int, r_km::T, θ::T, ϕ::T, Δt::T, extrapolate::Bool, at_pole::Bool, P::AbstractMatrix, dP::AbstractMatrix) where T<:Number -> NTuple{3, T}
