@@ -66,7 +66,7 @@ const igrf14_geodetic_test   = readdlm("./IGRF14_test_geodetic.txt")
     end
 
     # Testing the geodetic part of the algorithm.
-    for i in 1:size(igrf14_geocentric_test, 1)
+    for i in 1:size(igrf14_geodetic_test, 1)
         date  = igrf14_geodetic_test[i, 1]
         h     = igrf14_geodetic_test[i, 2]
         colat = igrf14_geodetic_test[i, 3]
@@ -384,7 +384,7 @@ end
     end
 
     # Testing the geodetic part of the algorithm.
-    for i in 1:size(igrf14_geocentric_test, 1)
+    for i in 1:size(igrf14_geodetic_test, 1)
         date  = igrf14_geodetic_test[i, 1]
         h     = igrf14_geodetic_test[i, 2]
         colat = igrf14_geodetic_test[i, 3]
