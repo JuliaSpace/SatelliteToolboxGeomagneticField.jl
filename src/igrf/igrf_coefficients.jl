@@ -233,6 +233,13 @@ const _IGRF_H = Float64[
 # Maximum degree of the IGRF.
 const _IGRF_MAX_DEGREE = 13
 
+# Interval between two consecutive epochs of the IGRF coefficients [years].
+const _IGRF_EPOCH_INTERVAL = 5
+
+# Number of epochs with coefficients in the matrices `_IGRF_G` and `_IGRF_H`. The first two
+# columns contain the degree and order, and the last column contains the secular variation.
+const _IGRF_NUM_EPOCHS = size(_IGRF_G, 2) - 3
+
 # Pre-compute Legendre coefficients.
 const _IGRF_LEGENDRE_COEFFICIENTS = LegendreCoefficients(Val(:schmidt), _IGRF_MAX_DEGREE)
 

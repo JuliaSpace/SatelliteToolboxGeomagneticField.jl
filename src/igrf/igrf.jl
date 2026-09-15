@@ -212,14 +212,11 @@ function igrf(
         @warn "The magnetic field computed with this IGRF version may be of reduced accuracy for years greater than $_IGRF_RELIABLE_YEAR."
     end
 
-    # If the `max_degree` is equal or lower than 0, we must clamp it to 1.
-    max_degree = max(max_degree, 1)
-
     # == Input Variables Conversion ========================================================
 
     # Convert latitude / longitude to co-latitude and east-longitude.
     θ = T(π / 2) - T(λ)
-    ϕ = (Ω >= 0) ? T(Ω) : T(2π) + T(Ω)
+    ϕ = T(Ω)
 
     # Check if the position is at one of the geographic poles, where the east component of
     # the field must be obtained by a limit since `sin(θ) = 0`.
@@ -230,23 +227,21 @@ function igrf(
 
     # == Preliminary Setup =================================================================
 
-    # Compute the epoch that will be used to obtain the coefficients. This is necessary
-    # because the IGRF provides coefficients every 5 years. Between two epochs, those
-    # coefficients must be interpolated.
-    idx   = floor(Int, clamp((date - 1900) / 5 + 1, 1, (_IGRF_RELIABLE_YEAR - 1900) / 5))
-    epoch = 1900 + (idx - 1) * 5
+    # Compute the index of the epoch used to obtain the coefficients, which are provided
+    # every `_IGRF_EPOCH_INTERVAL` years. Between two epochs, the coefficients are
+    # interpolated. After the last epoch, they are extrapolated using the secular variation.
+    idx   = clamp(floor(Int, (date - 1900) / _IGRF_EPOCH_INTERVAL) + 1, 1, _IGRF_NUM_EPOCHS)
+    epoch = 1900 + (idx - 1) * _IGRF_EPOCH_INTERVAL
 
     # We must jump the first two columns that are reserved for the degree and order.
     idx += 2
 
-    # Compute the fraction of time from the epoch of the coefficient selected by `idx`.
+    # Compute the elapsed time from the epoch of the coefficient selected by `idx`.
     Δt = T(date - epoch)
 
-    # Compute the maximum spherical harmonic degree for the selected date.
-    n_max = (epoch < 1995) ? 10 : 13
-
-    # Check if the user wants a lower degree.
-    n_max = min(max_degree, n_max)
+    # Compute the maximum spherical harmonic degree for the selected date, which is 10 for
+    # the epochs before 1995, and clamp it with the one requested by the user.
+    n_max = clamp(max_degree, 1, (epoch < 1995) ? 10 : _IGRF_MAX_DEGREE)
 
     # Check if the matrices related to Legendre must be computed.
     if isnothing(P)
@@ -398,19 +393,21 @@ end
 """
     _igrf_geomagnetic_potential_gradient(n_max::Int, idx::Int, r_km::T, θ::T, ϕ::T, Δt::T, extrapolate::Bool, at_pole::Bool, P::AbstractMatrix, dP::AbstractMatrix) where T<:Number -> NTuple{3, T}
 
-Compute the geomagnetic potential gradient.
+Compute the gradient of the geomagnetic potential.
 
 # Arguments
 
 - `n_max::Int`: Maximum degree when computing the potential in the spherical harmonics.
-- `idx::Int`: Index related to the desired epoch in the matrices `_IGRF_G` and `_IGRF_H`.
-- `r_km::T`: Position to compute the gradient from the Earth's center [km].
+- `idx::Int`: Column of the matrices `_IGRF_G` and `_IGRF_H` related to the desired epoch.
+- `r_km::T`: Distance from the Earth's center [km].
 - `θ::T`: Geocentric co-latitude [rad] ∈ [0, π].
-- `ϕ::T`: East-longitude [rad] ∈ [0, 2π].
-- `Δt::T`: Elapsed time from the epoch related to the index `idx` [year].
-- `extrapolate::Bool`: If `true`, the desired epoch is after the last year with
-    measurements (`_IGRF_LAST_YEAR_WITH_MEASUREMENTS`). Hence, we must use the coefficient
-    time-derivative in the last column of the matrices `_IGRF_G` and `_IGRF_H`.
+- `ϕ::T`: East-longitude [rad].
+- `Δt::T`: Elapsed time from the epoch related to the column `idx` [year].
+- `extrapolate::Bool`: If `true`, the desired date is after the last epoch with
+    measurements (`_IGRF_LAST_YEAR_WITH_MEASUREMENTS`). Hence, the coefficients are
+    extrapolated using their time-derivative stored in the last column of the matrices
+    `_IGRF_G` and `_IGRF_H`. Otherwise, they are interpolated between the columns `idx`
+    and `idx + 1`.
 - `at_pole::Bool`: If `true`, the position is at one of the geographic poles (`θ = 0` or
     `θ = π`). In this case, the derivative with respect to `ϕ` is replaced by the limit
     `∂V/∂ϕ / sin(θ)` so that the east component of the field can be obtained without
@@ -428,10 +425,10 @@ Compute the geomagnetic potential gradient.
 
 # Returns
 
-- `T`: Field derivative with respect to `r`: `∂V/∂r`.
-- `T`: Field derivative with respect to `ϕ`: `∂V/∂ϕ`. If `at_pole` is `true`, the
+- `T`: Potential derivative with respect to `r`: `∂V/∂r`.
+- `T`: Potential derivative with respect to `ϕ`: `∂V/∂ϕ`. If `at_pole` is `true`, the
     returned value is the limit of `∂V/∂ϕ / sin(θ)` at the pole instead.
-- `T`: Field derivative with respect to `θ`: `∂V/∂θ`.
+- `T`: Potential derivative with respect to `θ`: `∂V/∂θ`.
 """
 function _igrf_geomagnetic_potential_gradient(
     n_max::Int,
@@ -456,13 +453,34 @@ function _igrf_geomagnetic_potential_gradient(
     ratio = a / r_km
     fact = ratio
 
+    # == Linear Model of the Coefficients ==================================================
+    #
+    # The coefficients at the desired date are obtained by the linear combination:
+    #
+    #   Cnm = w₀ * C[k, c₀] + w₁ * C[k, c₁],
+    #
+    # where `C` is one of the coefficient matrices. If the date lies between two epochs,
+    # the columns are those epochs and the weights interpolate them. If the date is after
+    # the last epoch with measurements, the second column is the secular variation and the
+    # weights extrapolate the coefficients linearly, as in the reference implementation.
+    # Both matrices have the same number of columns.
+    c₀ = idx
+
+    if extrapolate
+        c₁ = size(G, 2)
+        w₀ = T(1)
+        w₁ = Δt
+    else
+        c₁ = idx + 1
+        w₁ = Δt / T(_IGRF_EPOCH_INTERVAL)
+        w₀ = T(1) - w₁
+    end
+
     # == Initialization of Variables =======================================================
 
     dVr = T(0)  # ........................ Derivative of the Geomagnetic potential w.r.t. r.
     dVθ = T(0)  # ........................ Derivative of the Geomagnetic potential w.r.t. θ.
     dVϕ = T(0)  # ........................ Derivative of the Geomagnetic potential w.r.t. ϕ.
-    ΔG  = T(0)  # .................... Auxiliary variable to interpolate the G coefficients.
-    ΔH  = T(0)  # .................... Auxiliary variable to interpolate the H coefficients.
     kg  = 1     # ............................ Index to obtain the values of the matrix `G`.
     kh  = 1     # ............................ Index to obtain the values of the matrix `H`.
 
@@ -481,23 +499,10 @@ function _igrf_geomagnetic_potential_gradient(
 
         # == Compute the Contributions When `m = 0` ========================================
 
-        # Get the coefficients in the epoch and interpolate to the desired time.
-        Gnm_e0 = T(G[kg, idx])
-
-        # If we need to extrapolate beyond the date we have measurements, we will use the
-        # last column of the coefficients matrices that contains the expected
-        # time-derivative.
-        if !extrapolate
-            Gnm_e1 = T(G[kg, idx + 1])
-            ΔG     = (Gnm_e1 - Gnm_e0) / T(5)
-        else
-            ΔG = T(G[kg, end])
-        end
-
-        Gnm = Gnm_e0 + ΔG * Δt
+        Gnm = w₀ * T(G[kg, c₀]) + w₁ * T(G[kg, c₁])
         kg += 1
 
-        aux_dVr += -(n + 1) / r_km * Gnm * P[n + 1, 1]
+        aux_dVr += Gnm * P[n + 1, 1]
         aux_dVθ += Gnm * dP[n + 1, 1]
 
         # == Sine and Cosine with m = 1 ====================================================
@@ -516,10 +521,6 @@ function _igrf_geomagnetic_potential_gradient(
         cos_m_1ϕ = T(1)      # cos( 0 * ϕ)
         cos_m_2ϕ = +cos_ϕ    # cos(-1 * ϕ)
 
-        # == Other Auxiliary Variables that Depend Only on `n` =============================
-
-        fact_dVr = T(n + 1) / r_km
-
         # == Compute the Contributions When `m ∈ [1, n]` ===================================
 
         for m in 1:n
@@ -529,27 +530,10 @@ function _igrf_geomagnetic_potential_gradient(
 
             # == Compute the Coefficients `G_nm` and `H_nm` ================================
 
-            # Get the coefficients in the epoch and interpolate to the desired time.
-            Gnm_e0 = T(G[kg, idx])
-            Hnm_e0 = T(H[kh, idx])
-
-            # If we need to extrapolate beyond the date we have measurements, we will use
-            # the last column of the coefficients matrices that contains the expected
-            # time-derivative.
-            if !extrapolate
-                Gnm_e1 = T(G[kg, idx + 1])
-                Hnm_e1 = T(H[kh, idx + 1])
-                ΔG     = (Gnm_e1 - Gnm_e0) / T(5)
-                ΔH     = (Hnm_e1 - Hnm_e0) / T(5)
-            else
-                ΔG = T(G[kg, end])
-                ΔH = T(H[kh, end])
-            end
-
-            Gnm = Gnm_e0 + ΔG * Δt
-            Hnm = Hnm_e0 + ΔH * Δt
-            kg  += 1
-            kh  += 1
+            Gnm = w₀ * T(G[kg, c₀]) + w₁ * T(G[kg, c₁])
+            Hnm = w₀ * T(H[kh, c₀]) + w₁ * T(H[kh, c₁])
+            kg += 1
+            kh += 1
 
             GcHs_nm = Gnm * cos_mϕ + Hnm * sin_mϕ
             GsHc_nm = Gnm * sin_mϕ - Hnm * cos_mϕ
@@ -559,8 +543,9 @@ function _igrf_geomagnetic_potential_gradient(
             P_nm  = P[n + 1, m + 1]
             dP_nm = dP[n + 1, m + 1]
 
-            aux_dVr += -fact_dVr * GcHs_nm * P_nm
+            aux_dVr += GcHs_nm * P_nm
             aux_dVθ += GcHs_nm * dP_nm
+
             # At the poles, `P_nm / sin(θ)` tends to `dP_nm * cos(θ)` for `m = 1` and to 0
             # for `m > 1`, when `dP_nm` is also 0. Hence, we can use the derivative to obtain
             # the limit of the east component, as in the reference implementation.
@@ -579,17 +564,14 @@ function _igrf_geomagnetic_potential_gradient(
         # fact = (a / r)^(n + 1)
         fact *= ratio
 
-        # aux_<> *= (a / r)^(n + 1)
-        aux_dVr *= fact
-        aux_dVϕ *= fact
-        aux_dVθ *= fact
-
-        dVr += aux_dVr
-        dVϕ += aux_dVϕ
-        dVθ += aux_dVθ
+        # The derivative with respect to `r` of `(a / r)^(n + 1)` adds the factor
+        # `-(n + 1) / r`. The division by `r` is performed only once after the loop.
+        dVr += -(n + 1) * fact * aux_dVr
+        dVϕ += fact * aux_dVϕ
+        dVθ += fact * aux_dVθ
     end
 
-    dVr *= a
+    dVr *= a / r_km
     dVϕ *= a
     dVθ *= a
 
