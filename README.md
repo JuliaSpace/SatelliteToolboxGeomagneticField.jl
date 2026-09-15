@@ -61,12 +61,13 @@ If `R` is omitted, it defaults to `Val(:geocentric)`.
 > the keyword `show_warnings` to `Val(false)`.
 
 > **Note**
-> The output vector will be represented in a North-East-Down (NED) reference system selected
-> by the parameter `R` (geocentric or geodetic). The Y-axis of the output reference system
-> always points East. In case of **geocentric coordinates**, the Z-axis points toward the
-> center of Earth and the X-axis completes a right-handed coordinate system. In case of
-> **geodetic coordinates**, the X-axis is tangent to the ellipsoid at the selected location
-> and points toward North, whereas the Z-axis completes a right-hand coordinate system.
+> The output vector will be represented in the North-East-Down (NED) reference system
+> associated with the representation selected by the parameter `R` (geocentric or geodetic).
+> The Y-axis always points East. In case of **geocentric coordinates**, the Z-axis points
+> toward the center of Earth and the X-axis completes a right-handed coordinate system. In
+> case of **geodetic coordinates**, the X-axis is tangent to the ellipsoid at the selected
+> location and points toward North, whereas the Z-axis completes a right-handed coordinate
+> system.
 
 The following keywords are available:
 
@@ -80,16 +81,19 @@ The following keywords are available:
     (**Default** = `Val(true)`).
 - `P::Union{Nothing, AbstractMatrix}`: An optional matrix that must contain at least
     `max_degree + 1 × max_degree + 1` real numbers that will be used to store the Legendre
-    coefficients, reducing the allocations. If it is `nothing`, the matrix will be created
-    when calling the function.
+    coefficients, reducing the allocations. Its element type should be the output type `T`
+    to avoid loss of precision. If it is `nothing`, the matrix will be created when calling
+    the function.
 - `dP::Union{Nothing, AbstractMatrix}`: An optional matrix that must contain at least
     `max_degree + 1 × max_degree + 1` real numbers that will be used to store the Legendre
-    derivative coefficients, reducing the allocations. If it is `nothing`, the matrix will
-    be created when calling the function.
+    derivative coefficients, reducing the allocations. Its element type should be the
+    output type `T` to avoid loss of precision. If it is `nothing`, the matrix will be
+    created when calling the function.
 
 This function returns a `SVector{3, T}`, which is the geomagnetic field vector [nT] at the
-desired location represented in the same input reference (geocentric or geodetic). Notice
-that the output type `T` is obtained by promoting `T1`, `T2`, and `T3` to a float.
+desired location represented in the NED reference system associated with the input
+representation (geocentric or geodetic). Notice that the output type `T` is obtained by
+promoting `T1`, `T2`, and `T3` to a float.
 
 ``` julia
 function igrf(date::Number, <r, h>::Number, λ::Number, Ω::Number[, R]; kwargs...)
@@ -118,12 +122,14 @@ If `R` is omitted, it defaults to `Val(:geocentric)`.
 > 2030 since the output is not reliable anymore. This message can be suppressed by setting
 > the keyword `show_warnings` to `Val(false)`.
 
-> **Note** The output vector will be represented in a North-East-Down (NED) reference system
-> selected by the parameter `R` (geocentric or geodetic). The Y-axis of the output reference
-> system always points East. In case of **geocentric coordinates**, the Z-axis points toward
-> the center of Earth and the X-axis completes a right-handed coordinate system. In case of
-> **geodetic coordinates**, the X-axis is tangent to the ellipsoid at the selected location
-> and points toward North, whereas the Z-axis completes a right-hand coordinate system.
+> **Note**
+> The output vector will be represented in the North-East-Down (NED) reference system
+> associated with the representation selected by the parameter `R` (geocentric or geodetic).
+> The Y-axis always points East. In case of **geocentric coordinates**, the Z-axis points
+> toward the center of Earth and the X-axis completes a right-handed coordinate system. In
+> case of **geodetic coordinates**, the X-axis is tangent to the ellipsoid at the selected
+> location and points toward North, whereas the Z-axis completes a right-handed coordinate
+> system.
 
 The following keywords are available:
 
@@ -137,71 +143,74 @@ The following keywords are available:
     (**Default** = `Val(true)`).
 - `P::Union{Nothing, AbstractMatrix}`: An optional matrix that must contain at least
     `max_degree + 1 × max_degree + 1` real numbers that will be used to store the Legendre
-    coefficients, reducing the allocations. If it is `nothing`, the matrix will be created
-    when calling the function.
+    coefficients, reducing the allocations. Its element type should be the output type `T`
+    to avoid loss of precision. If it is `nothing`, the matrix will be created when calling
+    the function.
 - `dP::Union{Nothing, AbstractMatrix}`: An optional matrix that must contain at least
     `max_degree + 1 × max_degree + 1` real numbers that will be used to store the Legendre
-    derivative coefficients, reducing the allocations. If it is `nothing`, the matrix will
-    be created when calling the function.
+    derivative coefficients, reducing the allocations. Its element type should be the
+    output type `T` to avoid loss of precision. If it is `nothing`, the matrix will be
+    created when calling the function.
 
-This function returns a `SVector{3, T}`, which is the geomagnetic field vector [nT] in either
-a geocentric or geodetic NED frame determined by the input reference value (`R`). Notice that
-the output type `T` is obtained by promoting `T1`, `T2`, and `T3` to a float.
+This function returns a `SVector{3, T}`, which is the geomagnetic field vector [nT] at the
+desired location represented in the NED reference system associated with the input
+representation (geocentric or geodetic). Notice that the output type `T` is obtained by
+promoting `T1`, `T2`, and `T3` to a float.
 
 ```julia
 julia> igrf(2017.12313, 640e3, 50 * pi / 180, 25 * pi / 180, Val(:geodetic))
 3-element StaticArraysCore.SVector{3, Float64} with indices SOneTo(3):
- 15365.317549816937
-  1274.4599656247276
+ 15365.317549816931
+  1274.459965624728
  34200.321000410804
 
 julia> igrfd(2017.12313, 640e3, 50, 25, Val(:geodetic))
 3-element StaticArraysCore.SVector{3, Float64} with indices SOneTo(3):
- 15365.317549816937
-  1274.4599656247276
+ 15365.317549816931
+  1274.459965624728
  34200.321000410804
 
 julia> igrf(2017.12313, 6371e3 + 640e3, 50 * pi / 180, 25 * pi / 180, Val(:geocentric))
 3-element StaticArraysCore.SVector{3, Float64} with indices SOneTo(3):
- 15165.0261597832
-  1269.1937290447647
+ 15165.026159783198
+  1269.1937290447652
  34242.14698863755
 
 julia> igrfd(2017.12313, 6371e3 + 640e3, 50, 25, Val(:geocentric))
 3-element StaticArraysCore.SVector{3, Float64} with indices SOneTo(3):
- 15165.0261597832
-  1269.1937290447647
+ 15165.026159783198
+  1269.1937290447652
  34242.14698863755
 ```
 
 ```julia
 julia> igrf(2031, 6371e3 + 640e3, 50 * pi/180, 25 * pi/180)
 ┌ Warning: The magnetic field computed with this IGRF version may be of reduced accuracy for years greater than 2030.
-└ @ SatelliteToolboxGeomagneticField ~/.julia/dev/SatelliteToolboxGeomagneticField/src/igrf/igrf.jl:300
+└ @ SatelliteToolboxGeomagneticField ~/.julia/packages/SatelliteToolboxGeomagneticField/src/igrf/igrf.jl:212
 3-element StaticArraysCore.SVector{3, Float64} with indices SOneTo(3):
  15121.462463886119
   1653.8244319548928
- 34799.38328175517
+ 34799.38328175518
 
 julia> igrfd(2031, 6371e3 + 640e3, 50, 25)
 ┌ Warning: The magnetic field computed with this IGRF version may be of reduced accuracy for years greater than 2030.
-└ @ SatelliteToolboxGeomagneticField ~/.julia/dev/SatelliteToolboxGeomagneticField/src/igrf/igrf.jl:300
+└ @ SatelliteToolboxGeomagneticField ~/.julia/packages/SatelliteToolboxGeomagneticField/src/igrf/igrf.jl:212
 3-element StaticArraysCore.SVector{3, Float64} with indices SOneTo(3):
  15121.462463886119
   1653.8244319548928
- 34799.38328175517
+ 34799.38328175518
 
 julia> igrf(2031, 6371e3 + 640e3, 50 * pi / 180, 25 * pi / 180; show_warnings = Val(false))
 3-element StaticArraysCore.SVector{3, Float64} with indices SOneTo(3):
  15121.462463886119
   1653.8244319548928
- 34799.38328175517
+ 34799.38328175518
 
 julia> igrfd(2031, 6371e3+640e3, 50, 25; show_warnings = Val(false))
 3-element StaticArraysCore.SVector{3, Float64} with indices SOneTo(3):
  15121.462463886119
   1653.8244319548928
- 34799.38328175517
+ 34799.38328175518
 ```
 
 ### Simplified dipole model
@@ -262,7 +271,7 @@ julia> geomagnetic_dipole_field(r_e, 1986)
 
 ## References
 
-- **[1]** **Alken, P.; Thébault, E.; Beggan, C. D. et al. (2021)**. *International
-  Geomagnetic Reference Field: The Thirteenth Generation*. **Earth Planets Space**, v. 73,
-  n. 49.
+- **[1]** **Beggan, C. D.; Kloss, C.; Amblard, P. et al. (2026)**. *International
+  Geomagnetic Reference Field: The Fourteenth Generation*. **Earth, Planets and Space**,
+  v. 78, n. 127.
 - **[2]** [http://wdc.kugi.kyoto-u.ac.jp/poles/polesexp.html](http://wdc.kugi.kyoto-u.ac.jp/poles/polesexp.html)

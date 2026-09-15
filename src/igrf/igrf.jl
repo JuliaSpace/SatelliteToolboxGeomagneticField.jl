@@ -5,8 +5,10 @@
 ## References ##############################################################################
 #
 # [1] https://www.ngdc.noaa.gov/IAGA/vmod/igrf.html
-# [2] https://www.ngdc.noaa.gov/IAGA/vmod/igrf12.f
+# [2] https://www.ngdc.noaa.gov/IAGA/vmod/igrf14.f
 # [3] https://www.mathworks.com/matlabcentral/fileexchange/34388-international-geomagnetic-reference-field--igrf--model
+# [4] Beggan, C. D.; Kloss, C.; Amblard, P. et al. (2026). International Geomagnetic
+#     Reference Field: The Fourteenth Generation. Earth, Planets and Space, v. 78, n. 127.
 #
 ############################################################################################
 
@@ -49,13 +51,13 @@ If `R` is omitted, it defaults to `Val(:geocentric)`.
 
 !!! info
 
-    The output vector will be represented in the same reference system selected by the
-    parameter `R` (geocentric or geodetic). The Y-axis of the output reference system always
-    points East. In case of **geocentric coordinates**, the Z-axis points toward the center
-    of Earth and the X-axis completes a right-handed coordinate system. In case of
-    **geodetic coordinates**, the X-axis is tangent to the ellipsoid at the selected
-    location and points toward North, whereas the Z-axis completes a right-hand coordinate
-    system.
+    The output vector will be represented in the North-East-Down (NED) reference system
+    associated with the representation selected by the parameter `R` (geocentric or
+    geodetic). The Y-axis always points East. In case of **geocentric coordinates**, the
+    Z-axis points toward the center of Earth and the X-axis completes a right-handed
+    coordinate system. In case of **geodetic coordinates**, the X-axis is tangent to the
+    ellipsoid at the selected location and points toward North, whereas the Z-axis
+    completes a right-handed coordinate system.
 
 # Keywords
 
@@ -69,19 +71,21 @@ If `R` is omitted, it defaults to `Val(:geocentric)`.
     (**Default** = `Val(true)`)
 - `P::Union{Nothing, AbstractMatrix}`: An optional matrix that must contain at least
     `max_degree + 1 × max_degree + 1` real numbers that will be used to store the Legendre
-    coefficients, reducing the allocations. If it is `nothing`, the matrix will be created
-    when calling the function.
+    coefficients, reducing the allocations. Its element type should be the output type `T`
+    to avoid loss of precision. If it is `nothing`, the matrix will be created when calling
+    the function.
     (**Default** = `nothing`)
 - `dP::Union{Nothing, AbstractMatrix}`: An optional matrix that must contain at least
     `max_degree + 1 × max_degree + 1` real numbers that will be used to store the Legendre
-    derivative coefficients, reducing the allocations. If it is `nothing`, the matrix will
-    be created when calling the function.
+    derivative coefficients, reducing the allocations. Its element type should be the
+    output type `T` to avoid loss of precision. If it is `nothing`, the matrix will be
+    created when calling the function.
     (**Default** = `nothing`)
 
 # Returns
 
 - `SVector{3, T}`: Geomagnetic field vector [nT] at the desired location represented in the
-    same input reference (geocentric or geodetic).
+    NED reference system associated with the input representation (geocentric or geodetic).
 
 !!! info
 
@@ -135,13 +139,13 @@ If `R` is omitted, it defaults to `Val(:geocentric)`.
 
 !!! info
 
-    The output vector will be represented in the same reference system selected by the
-    parameter `R` (geocentric or geodetic). The Y-axis of the output reference system always
-    points East. In case of **geocentric coordinates**, the Z-axis points toward the center
-    of Earth and the X-axis completes a right-handed coordinate system. In case of
-    **geodetic coordinates**, the X-axis is tangent to the ellipsoid at the selected
-    location and points toward North, whereas the Z-axis completes a right-hand coordinate
-    system.
+    The output vector will be represented in the North-East-Down (NED) reference system
+    associated with the representation selected by the parameter `R` (geocentric or
+    geodetic). The Y-axis always points East. In case of **geocentric coordinates**, the
+    Z-axis points toward the center of Earth and the X-axis completes a right-handed
+    coordinate system. In case of **geodetic coordinates**, the X-axis is tangent to the
+    ellipsoid at the selected location and points toward North, whereas the Z-axis
+    completes a right-handed coordinate system.
 
 # Keywords
 
@@ -155,19 +159,21 @@ If `R` is omitted, it defaults to `Val(:geocentric)`.
     (**Default** = `Val(true)`)
 - `P::Union{Nothing, AbstractMatrix}`: An optional matrix that must contain at least
     `max_degree + 1 × max_degree + 1` real numbers that will be used to store the Legendre
-    coefficients, reducing the allocations. If it is `nothing`, the matrix will be created
-    when calling the function.
+    coefficients, reducing the allocations. Its element type should be the output type `T`
+    to avoid loss of precision. If it is `nothing`, the matrix will be created when calling
+    the function.
     (**Default** = `nothing`)
 - `dP::Union{Nothing, AbstractMatrix}`: An optional matrix that must contain at least
     `max_degree + 1 × max_degree + 1` real numbers that will be used to store the Legendre
-    derivative coefficients, reducing the allocations. If it is `nothing`, the matrix will
-    be created when calling the function.
+    derivative coefficients, reducing the allocations. Its element type should be the
+    output type `T` to avoid loss of precision. If it is `nothing`, the matrix will be
+    created when calling the function.
     (**Default** = `nothing`)
 
 # Returns
 
 - `SVector{3, T}`: Geomagnetic field vector [nT] at the desired location represented in the
-    same input reference (geocentric or geodetic).
+    NED reference system associated with the input representation (geocentric or geodetic).
 
 !!! info
 
@@ -316,7 +322,7 @@ function igrf(
     dP::Union{Nothing, AbstractMatrix} = nothing,
 ) where {S}
 
-    # TODO: This method has a small error (≈ 0.01 nT) compared with the `igrf12syn`.
+    # TODO: This method has a small error (≈ 0.01 nT) compared with the `igrf14syn`.
     # However, the result is exactly the same as the MATLAB function in [3]. Hence, this
     # does not seem to be an error in the conversion from geodetic to geocentric
     # coordinates. This is probably caused by a numerical error. Further verification is
