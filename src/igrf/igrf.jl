@@ -476,6 +476,25 @@ function _igrf_geomagnetic_potential_gradient(
         w₀ = T(1) - w₁
     end
 
+    # == Sine and Cosine of the Multiples of the Longitude =================================
+    #
+    # Compute `sin(m * ϕ)` and `cos(m * ϕ)` for `m ∈ [0, n_max]` once using the Chebyshev
+    # recurrence. The vectors are stack allocated since they do not escape this function.
+    sin_mϕ = MVector{_IGRF_MAX_DEGREE + 1, T}(undef)
+    cos_mϕ = MVector{_IGRF_MAX_DEGREE + 1, T}(undef)
+
+    @inbounds begin
+        sin_mϕ[1] = T(0)
+        cos_mϕ[1] = T(1)
+        sin_mϕ[2] = sin_ϕ
+        cos_mϕ[2] = cos_ϕ
+
+        for m in 2:n_max
+            sin_mϕ[m + 1] = 2cos_ϕ * sin_mϕ[m] - sin_mϕ[m - 1]
+            cos_mϕ[m + 1] = 2cos_ϕ * cos_mϕ[m] - cos_mϕ[m - 1]
+        end
+    end
+
     # == Initialization of Variables =======================================================
 
     dVr = T(0)  # ........................ Derivative of the Geomagnetic potential w.r.t. r.
@@ -505,28 +524,11 @@ function _igrf_geomagnetic_potential_gradient(
         aux_dVr += Gnm * P[n + 1, 1]
         aux_dVθ += Gnm * dP[n + 1, 1]
 
-        # == Sine and Cosine with m = 1 ====================================================
-        #
-        # These values will be used to update recursively `sin(m * ϕ)` and `cos(m * ϕ)`,
-        # reducing the computational burden.
-        #
-        # TODO: Cache the computation.
-        # We tried to compute those values only once using an external vector to store the
-        # values. However, it leads to a worse performance. This behavior needs further
-        # investigation.
-        sin_mϕ   = +sin_ϕ    # sin( 1 * ϕ)
-        sin_m_1ϕ = T(0)      # sin( 0 * ϕ)
-        sin_m_2ϕ = -sin_ϕ    # sin(-1 * ϕ)
-        cos_mϕ   = +cos_ϕ    # cos( 1 * ϕ)
-        cos_m_1ϕ = T(1)      # cos( 0 * ϕ)
-        cos_m_2ϕ = +cos_ϕ    # cos(-1 * ϕ)
-
         # == Compute the Contributions When `m ∈ [1, n]` ===================================
 
         for m in 1:n
-            # Compute recursively `sin(m * ϕ)` and `cos(m * ϕ)`.
-            sin_mϕ = 2cos_ϕ * sin_m_1ϕ - sin_m_2ϕ
-            cos_mϕ = 2cos_ϕ * cos_m_1ϕ - cos_m_2ϕ
+            s_mϕ = sin_mϕ[m + 1]
+            c_mϕ = cos_mϕ[m + 1]
 
             # == Compute the Coefficients `G_nm` and `H_nm` ================================
 
@@ -535,8 +537,8 @@ function _igrf_geomagnetic_potential_gradient(
             kg += 1
             kh += 1
 
-            GcHs_nm = Gnm * cos_mϕ + Hnm * sin_mϕ
-            GsHc_nm = Gnm * sin_mϕ - Hnm * cos_mϕ
+            GcHs_nm = Gnm * c_mϕ + Hnm * s_mϕ
+            GsHc_nm = Gnm * s_mϕ - Hnm * c_mϕ
 
             # == Compute the Contributions for `m` =========================================
 
@@ -550,13 +552,6 @@ function _igrf_geomagnetic_potential_gradient(
             # for `m > 1`, when `dP_nm` is also 0. Hence, we can use the derivative to obtain
             # the limit of the east component, as in the reference implementation.
             aux_dVϕ += at_pole ? -m * GsHc_nm * dP_nm * cos_θ : -m * GsHc_nm * P_nm
-
-            # == Update the Values for the Next Step =======================================
-
-            sin_m_2ϕ = sin_m_1ϕ
-            sin_m_1ϕ = sin_mϕ
-            cos_m_2ϕ = cos_m_1ϕ
-            cos_m_1ϕ = cos_mϕ
         end
 
         # == Perform Final Computations Related to the Summation in `n` ====================
