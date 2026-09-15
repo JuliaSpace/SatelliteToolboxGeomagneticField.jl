@@ -445,15 +445,17 @@ function igrf(
         throw(ArgumentError("The longitude must be between -π and +π rad."))
     end
 
-    # Convert the geodetic coordinates to geocentric coordinates.
-    λ_gc, r = geodetic_to_geocentric(λ, h)
+    # Convert the geodetic coordinates to geocentric coordinates. The conversion can promote
+    # the values to the type of the ellipsoid parameters. Hence, we must convert the result
+    # back to `T` to keep the documented output type.
+    λ_gc, r = geodetic_to_geocentric(T(λ), T(h))
 
     # Compute the geomagnetic field in geocentric coordinates.
     B_gc = igrf(
         date,
-        r,
-        λ_gc,
-        Ω,
+        T(r),
+        T(λ_gc),
+        T(Ω),
         Val(:geocentric);
         max_degree = max_degree,
         show_warnings = show_warnings,
@@ -463,7 +465,7 @@ function igrf(
     )
 
     # Convert to geodetic coordinates.
-    D_gd_gc = angle_to_dcm(λ_gc - λ, :Y)
+    D_gd_gc = angle_to_dcm(T(λ_gc) - T(λ), :Y)
     B_gd    = D_gd_gc * B_gc
 
     return B_gd

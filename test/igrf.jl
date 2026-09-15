@@ -224,6 +224,12 @@ const igrf14_geodetic_test   = readdlm("./IGRF14_test_geodetic.txt")
 
     Bf32 = igrf(2020.4452, 6515.0f3, 0, -1)
     @test eltype(Bf32) === Float32
+
+    Bf32 = igrf(2020.4452, 752.0f3, 0.45f0, -1.34f0, Val(:geodetic))
+    @test eltype(Bf32) === Float32
+
+    Bf32 = igrf(2020.4452, 752.0f3, 0, -1, Val(:geodetic))
+    @test eltype(Bf32) === Float32
 end
 
 @testset "Function: igrf [Issues]" begin
@@ -477,6 +483,12 @@ end
     @test eltype(Bf32) === Float32
 
     Bf32 = igrfd(2020.4452, 6515.0f3, -25, -45)
+    @test eltype(Bf32) === Float32
+
+    Bf32 = igrfd(2020.4452, 752.0f3, -25.0f0, -45.0f0, Val(:geodetic))
+    @test eltype(Bf32) === Float32
+
+    Bf32 = igrfd(2020.4452, 752.0f3, -25, -45, Val(:geodetic))
     @test eltype(Bf32) === Float32
 end
 
