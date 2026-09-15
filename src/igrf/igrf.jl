@@ -340,6 +340,10 @@ function igrf(
     θ = T(π / 2) - T(λ)
     ϕ = (Ω >= 0) ? T(Ω) : T(2π) + T(Ω)
 
+    # Check if the position is at one of the geographic poles, where the east component of
+    # the field must be obtained by a limit since `sin(θ) = 0`.
+    at_pole = (θ == 0) || (θ == T(π))
+
     # The input variable `r` is in [m], but all the algorithm requires it to be in [km].
     r_km = T(r) / 1000
 
@@ -401,13 +405,22 @@ function igrf(
     # == Geomagnetic Potential Gradient ====================================================
 
     dVr, dVϕ, dVθ = _igrf_geomagnetic_potential_gradient(
-        n_max, idx, r_km, θ, ϕ, Δt, date >= _IGRF_LAST_YEAR_WITH_MEASUREMENTS, P, dP
+        n_max,
+        idx,
+        r_km,
+        θ,
+        ϕ,
+        Δt,
+        date >= _IGRF_LAST_YEAR_WITH_MEASUREMENTS,
+        at_pole,
+        P,
+        dP,
     )
 
     # == Compute the Geomagnetic Field Vector in the Geocentric Reference Frame ============
 
     x = +dVθ / r_km
-    y = (θ == 0) ? -dVϕ / r_km : -dVϕ / (r_km * sin(θ))
+    y = at_pole ? -dVϕ / r_km : -dVϕ / (r_km * sin(θ))
     z = dVr
 
     B_gc = SVector{3, T}(x, y, z)
@@ -476,7 +489,7 @@ end
 ############################################################################################
 
 """
-    _igrf_geomagnetic_potential_gradient(n_max::Int, idx::Int, r_km::T, θ::T, ϕ::T, Δt::T, extrapolate::Bool, P::AbstractMatrix, dP::AbstractMatrix) where T<:Number -> NTuple{3, T}
+    _igrf_geomagnetic_potential_gradient(n_max::Int, idx::Int, r_km::T, θ::T, ϕ::T, Δt::T, extrapolate::Bool, at_pole::Bool, P::AbstractMatrix, dP::AbstractMatrix) where T<:Number -> NTuple{3, T}
 
 Compute the geomagnetic potential gradient.
 
@@ -491,6 +504,10 @@ Compute the geomagnetic potential gradient.
 - `extrapolate::Bool`: If `true`, the desired epoch is after the last year with
     measurements (`_IGRF_LAST_YEAR_WITH_MEASUREMENTS`). Hence, we must use the coefficient
     time-derivative in the last column of the matrices `_IGRF_G` and `_IGRF_H`.
+- `at_pole::Bool`: If `true`, the position is at one of the geographic poles (`θ = 0` or
+    `θ = π`). In this case, the derivative with respect to `ϕ` is replaced by the limit
+    `∂V/∂ϕ / sin(θ)` so that the east component of the field can be obtained without
+    dividing by `sin(θ) = 0`.
 - `P::AbstractMatrix`: An auxiliary matrix to compute the values of the Legendre associated
     functions. It must have a dimension equal to or greater than `n_max + 1 × n_max + 1`.
 - `dP::AbstractMatrix`: An auxiliary matrix to compute the derivatives of the Legendre
@@ -505,7 +522,8 @@ Compute the geomagnetic potential gradient.
 # Returns
 
 - `T`: Field derivative with respect to `r`: `∂V/∂r`.
-- `T`: Field derivative with respect to `ϕ`: `∂V/∂ϕ`.
+- `T`: Field derivative with respect to `ϕ`: `∂V/∂ϕ`. If `at_pole` is `true`, the
+    returned value is the limit of `∂V/∂ϕ / sin(θ)` at the pole instead.
 - `T`: Field derivative with respect to `θ`: `∂V/∂θ`.
 """
 function _igrf_geomagnetic_potential_gradient(
@@ -516,6 +534,7 @@ function _igrf_geomagnetic_potential_gradient(
     ϕ::T,
     Δt::T,
     extrapolate::Bool,
+    at_pole::Bool,
     P::AbstractMatrix,
     dP::AbstractMatrix,
 ) where {T <: Number}
@@ -526,6 +545,7 @@ function _igrf_geomagnetic_potential_gradient(
 
     # Auxiliary variables to improve computational speed.
     sin_ϕ, cos_ϕ = sincos(ϕ)
+    cos_θ = cos(θ)
     ratio = a / r_km
     fact = ratio
 
@@ -634,7 +654,10 @@ function _igrf_geomagnetic_potential_gradient(
 
             aux_dVr += -fact_dVr * GcHs_nm * P_nm
             aux_dVθ += GcHs_nm * dP_nm
-            aux_dVϕ += (θ == 0) ? -m * GsHc_nm * dP_nm : -m * GsHc_nm * P_nm
+            # At the poles, `P_nm / sin(θ)` tends to `dP_nm * cos(θ)` for `m = 1` and to 0
+            # for `m > 1`, when `dP_nm` is also 0. Hence, we can use the derivative to obtain
+            # the limit of the east component, as in the reference implementation.
+            aux_dVϕ += at_pole ? -m * GsHc_nm * dP_nm * cos_θ : -m * GsHc_nm * P_nm
 
             # == Update the Values for the Next Step =======================================
 

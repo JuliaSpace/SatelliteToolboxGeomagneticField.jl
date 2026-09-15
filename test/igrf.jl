@@ -243,6 +243,24 @@ end
     @test B[1] ≈ 908.1899663358307
     @test B[2] ≈ 173.01468080386584
     @test B[3] ≈ 41139.84620809845
+
+    # Calculation close to the geographic south pole.
+    B = igrf(2019, 7150e3, -π / 2 + 1e-15, 0.55)
+    @test B[1] ≈ 4128.0809123518175
+    @test B[2] ≈ -9489.711888461976
+    @test B[3] ≈ -36733.71036914592
+
+    B = igrf(2019, 7150e3, -π / 2, 0.55)
+    @test B[1] ≈ 4128.0809123518175
+    @test B[2] ≈ -9489.711888461976
+    @test B[3] ≈ -36733.71036914592
+
+    # The geodetic and degree-based methods must also be continuous at both poles.
+    for R in (Val(:geocentric), Val(:geodetic)), λ in (-90, +90)
+        Bp = igrfd(2019, 7150e3, λ, 31.5, R)
+        Bn = igrfd(2019, 7150e3, λ - sign(λ) * 1e-13, 31.5, R)
+        @test Bp ≈ Bn
+    end
 end
 
 @testset "Function: igrf [ERRORS]" begin
