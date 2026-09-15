@@ -63,64 +63,52 @@ end
 #                                    Private Functions                                     #
 ############################################################################################
 
-# Obtain the geomagnetic dipole coefficients (latitude and longitude of the south
-# geomagnetic pole and the dipole moment) in `year`.
+"""
+    _geomagnetic_dipole_coefficients(year::Number) -> Float64, Float64, Float64
+
+Obtain the geomagnetic dipole coefficients in `year` by linearly interpolating the table
+`_GEOMAGNETIC_DIPOLE_MODEL_COEFFICIENTS`. If `year` is outside the interval of the table,
+the values at the closest limit are returned (flat extrapolation).
+
+# Returns
+
+- `Float64`: Latitude of the south geomagnetic pole [rad].
+- `Float64`: Longitude of the south geomagnetic pole [rad].
+- `Float64`: Dipole moment [A.m²].
+"""
 function _geomagnetic_dipole_coefficients(year::Number)
-    C = _GEOMAGNETIC_DIPOLE_MODEL_COEFFICIENTS
+    C     = _GEOMAGNETIC_DIPOLE_MODEL_COEFFICIENTS
+    years = _GEOMAGNETIC_DIPOLE_MODEL_YEARS
 
-    # We will interpolate linearly the coefficients. Hence, we first check if the year is
-    # beyond the limits, when we will clamp the output (flat extrapolation).
-    if year <= C[1, 1]
-        return deg2rad(C[1, 2]), deg2rad(C[1, 3]), C[1, 4] * 1e22
+    # Clamp the year to the limits of the table, leading to a flat extrapolation.
+    if year <= years[begin]
+        return deg2rad(C[begin, 2]), deg2rad(C[begin, 3]), C[begin, 4] * 1e22
 
-    elseif year >= C[end, 1]
+    elseif year >= years[end]
         return deg2rad(C[end, 2]), deg2rad(C[end, 3]), C[end, 4] * 1e22
-
-    else
-        # Perform an interval binary search of `year` in `C[1, :]`. It means that this
-        # algorithm returns `id` such that `C[id, 1] <= year < C[id + 1, 1]`. Notice that we
-        # use 0 as a sentinel value to indicate that the interval was not found yet,
-        # avoiding a type instability caused by initializing `id` with `nothing`.
-        num_elements = size(C, 1)
-        low = 1
-        high = num_elements
-        id = 0
-
-        while low < high
-            mid = div(low + high, 2, RoundDown)
-
-            if C[mid, 1] <= year < C[mid + 1, 1]
-                id = mid
-                break
-
-            elseif (C[mid, 1] < year)
-                low = mid + 1
-
-            elseif (C[mid, 1] > year)
-                high = mid
-            end
-        end
-
-        (id == 0) && (id = low)
-
-        # Linearly interpolate the values.
-        Δt = year - C[id, 1]
-
-        year₀ = C[id, 1]
-        lat₀  = C[id, 2]
-        lon₀  = C[id, 3]
-        m₀    = C[id, 4]
-
-        Δyear = C[id + 1, 1] - year₀
-        Δlat  = C[id + 1, 2] - lat₀
-        Δlon  = C[id + 1, 3] - lon₀
-        Δm    = C[id + 1, 4] - m₀
-
-        lat = lat₀ + Δlat / Δyear * Δt
-        lon = lon₀ + Δlon / Δyear * Δt
-        m   = m₀ + Δm / Δyear * Δt
-
-        # Return the values with the correct units.
-        return deg2rad(lat), deg2rad(lon), m * 1e22
     end
+
+    # Find `id` such that `years[id] <= year < years[id + 1]`, which exists since `year` is
+    # strictly inside the interval of the table.
+    id = searchsortedlast(years, year)
+
+    # Linearly interpolate the values.
+    year₀ = years[id]
+    lat₀  = C[id, 2]
+    lon₀  = C[id, 3]
+    m₀    = C[id, 4]
+
+    Δyear = years[id + 1] - year₀
+    Δlat  = C[id + 1, 2] - lat₀
+    Δlon  = C[id + 1, 3] - lon₀
+    Δm    = C[id + 1, 4] - m₀
+
+    Δt = (year - year₀) / Δyear
+
+    lat = lat₀ + Δlat * Δt
+    lon = lon₀ + Δlon * Δt
+    m   = m₀ + Δm * Δt
+
+    # Return the values with the correct units.
+    return deg2rad(lat), deg2rad(lon), m * 1e22
 end

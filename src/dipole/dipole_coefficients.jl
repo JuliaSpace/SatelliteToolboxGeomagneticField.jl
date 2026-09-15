@@ -58,3 +58,7 @@ const _GEOMAGNETIC_DIPOLE_MODEL_COEFFICIENTS = [
     2029    +81.0   -72.9   +7.67
     2030    +81.1   -73.0   +7.67
 ]
+
+# Years of the coefficients above, used to search the interval that contains the desired
+# year when interpolating.
+const _GEOMAGNETIC_DIPOLE_MODEL_YEARS = _GEOMAGNETIC_DIPOLE_MODEL_COEFFICIENTS[:, 1]
