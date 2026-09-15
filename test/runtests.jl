@@ -1,3 +1,9 @@
+## Description #############################################################################
+#
+# Entry point of the test suite.
+#
+############################################################################################
+
 using Test
 
 using DelimitedFiles
@@ -15,22 +21,16 @@ end
     include("./dipole.jl")
 end
 
+# The quality, performance, and differentiation checks depend on packages that are not
+# guaranteed to work on prerelease versions of Julia (JET, AllocCheck, and Zygote).
 if isempty(VERSION.prerelease)
-    using Pkg
-    Pkg.add("JET")
-    Pkg.add("AllocCheck")
-    Pkg.add("Aqua")
-
-    using JET
-    using AllocCheck
     using Aqua
+    using AllocCheck
+    using JET
 
     @testset "Performance Tests" verbose = true begin
         include("./performance.jl")
     end
-
-    Pkg.add("ForwardDiff")
-    Pkg.add("Zygote")
 
     using ForwardDiff
     using Zygote
