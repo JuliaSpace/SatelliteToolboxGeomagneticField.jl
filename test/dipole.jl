@@ -83,6 +83,18 @@
     @test B_e_result_int == B_e_result_f64
     @test eltype(B_e_result_int) === Float64
 
+    # == Test 4 ============================================================================
+    #
+    # The input vector must have three elements. Otherwise, the norm would use all the
+    # elements while the direction would use only the first three.
+
+    @test_throws DimensionMismatch geomagnetic_dipole_field([0.0, 0.0], year)
+    @test_throws DimensionMismatch geomagnetic_dipole_field([0.0, 0.0, 7e6, 7e6], year)
+    @test_throws DimensionMismatch geomagnetic_dipole_field(SVector{2}(0.0, 0.0), year)
+    @test_throws DimensionMismatch geomagnetic_dipole_field(
+        SVector{4}(0.0, 0.0, 7e6, 7e6), year
+    )
+
     # == Test Extrapolation ================================================================
 
     r_e = R0 * (@SVector rand(3))

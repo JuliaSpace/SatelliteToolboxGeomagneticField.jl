@@ -24,6 +24,7 @@ omitted, it defaults to 2020.
 2. The returned vector type is obtained by converting `T` to a float.
 3. The south geomagnetic pole position and dipole moment are obtained by interpolating the
     values provided in **[1]**.
+4. A `DimensionMismatch` is thrown if `r_e` does not have three elements.
 
 # References
 
@@ -42,11 +43,15 @@ function geomagnetic_dipole_field(r_e::AbstractVector{T}, year::Number = 2020) w
     # Compute the dipole momentum represented in the ECEF reference frame.
     k₀_e = Tf(1e-7) * Tf(m) * (Dge' * SVector{3, Tf}(0, 0, -1))
 
+    # Convert the position to a static vector, which also throws a `DimensionMismatch` if
+    # the input does not have three elements.
+    r_e_s = SVector{3, Tf}(r_e)
+
     # Compute the distance from the Earth center of the desired point.
-    r = norm(r_e)
+    r = norm(r_e_s)
 
     # Compute the unitary vector that points to the desired direction.
-    er_e = SVector{3, Tf}(r_e[1], r_e[2], r_e[3]) / r
+    er_e = r_e_s / r
 
     # Compute the geomagnetic field vector [nT].
     B_e = (3er_e * er_e' - I) * k₀_e * Tf(1e9) / r^3
