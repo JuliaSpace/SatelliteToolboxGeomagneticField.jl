@@ -24,11 +24,10 @@ function ChainRulesCore.rrule(
     Ω::Number,
     ::Val{:geocentric};
     max_degree::Int = _IGRF_MAX_DEGREE,
-    show_warnings::Bool = true,
-    verbose::Val{verbosity} = Val(false),
+    show_warnings::Val{S} = Val(true),
     P::Union{Nothing, AbstractMatrix} = nothing,
     dP::Union{Nothing, AbstractMatrix} = nothing,
-) where {verbosity}
+) where {S}
     y = igrf(
         date,
         r,
@@ -37,7 +36,6 @@ function ChainRulesCore.rrule(
         Val(:geocentric);
         max_degree = max_degree,
         show_warnings = show_warnings,
-        verbose = verbose,
         P = P,
         dP = dP,
     )
@@ -52,7 +50,6 @@ function ChainRulesCore.rrule(
                 Val(:geocentric);
                 max_degree = max_degree,
                 show_warnings = show_warnings,
-                verbose = verbose,
             ),
             [date; r; λ_gc; Ω],
         )

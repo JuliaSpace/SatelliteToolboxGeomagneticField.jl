@@ -58,7 +58,7 @@ If `R` is omitted, it defaults to `Val(:geocentric)`.
 > **Warning**
 > We must have `1900 <= date <= 2035`. A warning message is printed for dates greater than
 > 2030 since the output is not reliable anymore. This message can be suppressed by setting
-> the keyword `show_warnings` to `false`.
+> the keyword `show_warnings` to `Val(false)`.
 
 > **Note**
 > The output vector will be represented in a North-East-Down (NED) reference system selected
@@ -74,11 +74,10 @@ The following keywords are available:
     geomagnetic field. If it is higher than the available number of coefficients in the IGRF
     matrices, it will be clamped. If it is equal to or lower than 0, it will be set to 1.
     (**Default** = 13)
-- `show_warnings::Bool`: Show warnings about the data (**Default** = `true`).
-- `verbose::Val`: If it is `Val(true)`, the warning about the reduced accuracy can be
-    printed using `@warn`. If it is `Val(false)`, the code related to the warning is
-    removed at compile time, enabling allocation-free calls. Notice that `show_warnings`
-    must also be `true` for the warning to be printed (**Default** = `Val(true)`).
+- `show_warnings::Val`: If it is `Val(true)`, a warning is printed using `@warn` for dates
+    greater than 2030, when the accuracy of the model is reduced. If it is `Val(false)`, the
+    code related to the warning is removed at compile time, enabling allocation-free calls
+    (**Default** = `Val(true)`).
 - `P::Union{Nothing, AbstractMatrix}`: An optional matrix that must contain at least
     `max_degree + 1 × max_degree + 1` real numbers that will be used to store the Legendre
     coefficients, reducing the allocations. If it is `nothing`, the matrix will be created
@@ -117,7 +116,7 @@ If `R` is omitted, it defaults to `Val(:geocentric)`.
 > **Warning**
 > We must have `1900 <= date <= 2035`. A warning message is printed for dates greater than
 > 2030 since the output is not reliable anymore. This message can be suppressed by setting
-> the keyword `show_warnings` to `false`.
+> the keyword `show_warnings` to `Val(false)`.
 
 > **Note** The output vector will be represented in a North-East-Down (NED) reference system
 > selected by the parameter `R` (geocentric or geodetic). The Y-axis of the output reference
@@ -132,11 +131,10 @@ The following keywords are available:
     geomagnetic field. If it is higher than the available number of coefficients in the IGRF
     matrices, it will be clamped. If it is equal to or lower than 0, it will be set to 1.
     (**Default** = 13)
-- `show_warnings::Bool`: Show warnings about the data (**Default** = `true`).
-- `verbose::Val`: If it is `Val(true)`, the warning about the reduced accuracy can be
-    printed using `@warn`. If it is `Val(false)`, the code related to the warning is
-    removed at compile time, enabling allocation-free calls. Notice that `show_warnings`
-    must also be `true` for the warning to be printed (**Default** = `Val(true)`).
+- `show_warnings::Val`: If it is `Val(true)`, a warning is printed using `@warn` for dates
+    greater than 2030, when the accuracy of the model is reduced. If it is `Val(false)`, the
+    code related to the warning is removed at compile time, enabling allocation-free calls
+    (**Default** = `Val(true)`).
 - `P::Union{Nothing, AbstractMatrix}`: An optional matrix that must contain at least
     `max_degree + 1 × max_degree + 1` real numbers that will be used to store the Legendre
     coefficients, reducing the allocations. If it is `nothing`, the matrix will be created
@@ -193,13 +191,13 @@ julia> igrfd(2031, 6371e3 + 640e3, 50, 25)
   1653.8244319548928
  34799.38328175517
 
-julia> igrf(2031, 6371e3 + 640e3, 50 * pi / 180, 25 * pi / 180; show_warnings = false)
+julia> igrf(2031, 6371e3 + 640e3, 50 * pi / 180, 25 * pi / 180; show_warnings = Val(false))
 3-element StaticArraysCore.SVector{3, Float64} with indices SOneTo(3):
  15121.462463886119
   1653.8244319548928
  34799.38328175517
 
-julia> igrfd(2031, 6371e3+640e3, 50, 25; show_warnings = false)
+julia> igrfd(2031, 6371e3+640e3, 50, 25; show_warnings = Val(false))
 3-element StaticArraysCore.SVector{3, Float64} with indices SOneTo(3):
  15121.462463886119
   1653.8244319548928

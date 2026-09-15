@@ -263,6 +263,30 @@ end
     end
 end
 
+@testset "Function: igrf [Warnings]" begin
+    P = zeros(14, 14)
+    dP = zeros(14, 14)
+    msg = "The magnetic field computed with this IGRF version may be of reduced accuracy for years greater than 2030."
+
+    for R in (Val(:geocentric), Val(:geodetic))
+        # The warning must be printed by default for dates after the reliable year.
+        @test_logs (:warn, msg) igrf(2031, 7000e3, 0.5, 0.5, R)
+        @test_logs (:warn, msg) igrf(2031, 7000e3, 0.5, 0.5, R; show_warnings = Val(true))
+        @test_logs (:warn, msg) igrfd(2031, 7000e3, 30, 30, R)
+
+        # The warning must be suppressed with `Val(false)`.
+        @test_nowarn igrf(2031, 7000e3, 0.5, 0.5, R; show_warnings = Val(false))
+        @test_nowarn igrfd(2031, 7000e3, 30, 30, R; show_warnings = Val(false))
+        @test_nowarn igrf(
+            2031, 7000e3, 0.5, 0.5, R; P = P, dP = dP, show_warnings = Val(false)
+        )
+
+        # No warning must be printed for dates up to the reliable year.
+        @test_nowarn igrf(2030, 7000e3, 0.5, 0.5, R)
+        @test_nowarn igrfd(2030, 7000e3, 30, 30, R)
+    end
+end
+
 @testset "Function: igrf [ERRORS]" begin
     P₀  = zeros(10, 10)
     dP₀ = zeros(10, 10)

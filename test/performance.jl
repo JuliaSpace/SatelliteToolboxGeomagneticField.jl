@@ -20,7 +20,7 @@ end
     @test length(
         check_allocs(
             (date, r, λ, Ω, P, dP) -> begin
-                igrf(date, r, λ, Ω; P = P, dP = dP, verbose = Val(false))
+                igrf(date, r, λ, Ω; P = P, dP = dP, show_warnings = Val(false))
             end,
             (Float64, Float64, Float64, Float64, Matrix{Float64}, Matrix{Float64}),
         ),
@@ -29,7 +29,7 @@ end
     @test length(
         check_allocs(
             (date, h, λ, Ω, P, dP) -> begin
-                igrf(date, h, λ, Ω, Val(:geodetic); P = P, dP = dP, verbose = Val(false))
+                igrf(date, h, λ, Ω, Val(:geodetic); P = P, dP = dP, show_warnings = Val(false))
             end,
             (Float64, Float64, Float64, Float64, Matrix{Float64}, Matrix{Float64}),
         ),
@@ -38,7 +38,7 @@ end
     @test length(
         check_allocs(
             (date, r, λ, Ω, P, dP) -> begin
-                igrfd(date, r, λ, Ω; P = P, dP = dP, verbose = Val(false))
+                igrfd(date, r, λ, Ω; P = P, dP = dP, show_warnings = Val(false))
             end,
             (Float64, Float64, Float64, Float64, Matrix{Float64}, Matrix{Float64}),
         ),
@@ -47,7 +47,16 @@ end
     @test length(
         check_allocs(
             (date, h, λ, Ω, P, dP) -> begin
-                igrfd(date, h, λ, Ω, Val(:geodetic); P = P, dP = dP, verbose = Val(false))
+                igrfd(
+                    date,
+                    h,
+                    λ,
+                    Ω,
+                    Val(:geodetic);
+                    P = P,
+                    dP = dP,
+                    show_warnings = Val(false),
+                )
             end,
             (Float64, Float64, Float64, Float64, Matrix{Float64}, Matrix{Float64}),
         ),
@@ -65,7 +74,7 @@ end
     @test length(
         check_allocs(
             (date, r, λ, Ω, P, dP) -> begin
-                igrf(date, r, λ, Ω; P = P, dP = dP, verbose = Val(false))
+                igrf(date, r, λ, Ω; P = P, dP = dP, show_warnings = Val(false))
             end,
             (
                 Float64,
@@ -81,7 +90,7 @@ end
     @test length(
         check_allocs(
             (date, h, λ, Ω, P, dP) -> begin
-                igrf(date, h, λ, Ω, Val(:geodetic); P = P, dP = dP, verbose = Val(false))
+                igrf(date, h, λ, Ω, Val(:geodetic); P = P, dP = dP, show_warnings = Val(false))
             end,
             (
                 Float64,
@@ -97,7 +106,7 @@ end
     @test length(
         check_allocs(
             (date, r, λ, Ω, P, dP) -> begin
-                igrfd(date, r, λ, Ω; P = P, dP = dP, verbose = Val(false))
+                igrfd(date, r, λ, Ω; P = P, dP = dP, show_warnings = Val(false))
             end,
             (
                 Float64,
@@ -113,7 +122,16 @@ end
     @test length(
         check_allocs(
             (date, h, λ, Ω, P, dP) -> begin
-                igrfd(date, h, λ, Ω, Val(:geodetic); P = P, dP = dP, verbose = Val(false))
+                igrfd(
+                    date,
+                    h,
+                    λ,
+                    Ω,
+                    Val(:geodetic);
+                    P = P,
+                    dP = dP,
+                    show_warnings = Val(false),
+                )
             end,
             (
                 Float64,

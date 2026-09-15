@@ -45,7 +45,7 @@ If `R` is omitted, it defaults to `Val(:geocentric)`.
 
     We must have `1900 <= date <= 2035`. A warning message is printed for dates greater than
     2030 since the output is not reliable anymore. This message can be suppressed by setting
-    the keyword `show_warnings` to `false`.
+    the keyword `show_warnings` to `Val(false)`.
 
 !!! info
 
@@ -63,12 +63,9 @@ If `R` is omitted, it defaults to `Val(:geocentric)`.
     geomagnetic field. If it is higher than the available number of coefficients in the IGRF
     matrices, it will be clamped. If it is equal to or lower than 0, it will be set to 1.
     (**Default** = 13)
-- `show_warnings::Bool`: Show warnings about the data.
-    (**Default** = `true`)
-- `verbose::Val`: If it is `Val(true)`, the warning about the reduced accuracy can be
-    printed using `@warn`. If it is `Val(false)`, the code related to the warning is
-    removed at compile time, enabling allocation-free calls. Notice that `show_warnings`
-    must also be `true` for the warning to be printed.
+- `show_warnings::Val`: If it is `Val(true)`, a warning is printed using `@warn` for dates
+    greater than 2030, when the accuracy of the model is reduced. If it is `Val(false)`, the
+    code related to the warning is removed at compile time, enabling allocation-free calls.
     (**Default** = `Val(true)`)
 - `P::Union{Nothing, AbstractMatrix}`: An optional matrix that must contain at least
     `max_degree + 1 × max_degree + 1` real numbers that will be used to store the Legendre
@@ -96,11 +93,10 @@ function igrfd(
     λ_gc::Number,
     Ω::Number;
     max_degree::Int = _IGRF_MAX_DEGREE,
-    show_warnings::Bool = true,
-    verbose::Val{verbosity} = Val(true),
+    show_warnings::Val{S} = Val(true),
     P::Union{Nothing, AbstractMatrix} = nothing,
     dP::Union{Nothing, AbstractMatrix} = nothing,
-) where {verbosity}
+) where {S}
     return igrfd(
         date,
         r,
@@ -109,7 +105,6 @@ function igrfd(
         Val(:geocentric);
         max_degree = max_degree,
         show_warnings = show_warnings,
-        verbose = Val(verbosity),
         P = P,
         dP = dP,
     )
@@ -122,11 +117,10 @@ function igrfd(
     Ω::T3,
     ::Val{:geocentric};
     max_degree::Int = _IGRF_MAX_DEGREE,
-    show_warnings::Bool = true,
-    verbose::Val{verbosity} = Val(true),
+    show_warnings::Val{S} = Val(true),
     P::Union{Nothing, AbstractMatrix} = nothing,
     dP::Union{Nothing, AbstractMatrix} = nothing,
-) where {T1 <: Number, T2 <: Number, T3 <: Number, verbosity}
+) where {T1 <: Number, T2 <: Number, T3 <: Number, S}
     T = promote_type(T1, T2, T3) |> float
 
     # Check if the latitude and longitude are valid.
@@ -146,7 +140,6 @@ function igrfd(
         Val(:geocentric);
         max_degree = max_degree,
         show_warnings = show_warnings,
-        verbose = Val(verbosity),
         P = P,
         dP = dP,
     )
@@ -159,11 +152,10 @@ function igrfd(
     Ω::T3,
     ::Val{:geodetic};
     max_degree::Int = _IGRF_MAX_DEGREE,
-    show_warnings::Bool = true,
-    verbose::Val{verbosity} = Val(true),
+    show_warnings::Val{S} = Val(true),
     P::Union{Nothing, AbstractMatrix} = nothing,
     dP::Union{Nothing, AbstractMatrix} = nothing,
-) where {T1 <: Number, T2 <: Number, T3 <: Number, verbosity}
+) where {T1 <: Number, T2 <: Number, T3 <: Number, S}
     T = promote_type(T1, T2, T3) |> float
 
     # Check if the latitude and longitude are valid.
@@ -183,7 +175,6 @@ function igrfd(
         Val(:geodetic);
         max_degree = max_degree,
         show_warnings = show_warnings,
-        verbose = Val(verbosity),
         P = P,
         dP = dP,
     )
@@ -218,7 +209,7 @@ If `R` is omitted, it defaults to `Val(:geocentric)`.
 
     We must have `1900 <= date <= 2035`. A warning message is printed for dates greater than
     2030 since the output is not reliable anymore. This message can be suppressed by setting
-    the keyword `show_warnings` to `false`.
+    the keyword `show_warnings` to `Val(false)`.
 
 !!! info
 
@@ -236,12 +227,9 @@ If `R` is omitted, it defaults to `Val(:geocentric)`.
     geomagnetic field. If it is higher than the available number of coefficients in the IGRF
     matrices, it will be clamped. If it is equal to or lower than 0, it will be set to 1.
     (**Default** = 13)
-- `show_warnings::Bool`: Show warnings about the data.
-    (**Default** = `true`)
-- `verbose::Val`: If it is `Val(true)`, the warning about the reduced accuracy can be
-    printed using `@warn`. If it is `Val(false)`, the code related to the warning is
-    removed at compile time, enabling allocation-free calls. Notice that `show_warnings`
-    must also be `true` for the warning to be printed.
+- `show_warnings::Val`: If it is `Val(true)`, a warning is printed using `@warn` for dates
+    greater than 2030, when the accuracy of the model is reduced. If it is `Val(false)`, the
+    code related to the warning is removed at compile time, enabling allocation-free calls.
     (**Default** = `Val(true)`)
 - `P::Union{Nothing, AbstractMatrix}`: An optional matrix that must contain at least
     `max_degree + 1 × max_degree + 1` real numbers that will be used to store the Legendre
@@ -269,11 +257,10 @@ function igrf(
     λ_gc::Number,
     Ω::Number;
     max_degree::Int = _IGRF_MAX_DEGREE,
-    show_warnings::Bool = true,
-    verbose::Val{verbosity} = Val(true),
+    show_warnings::Val{S} = Val(true),
     P::Union{Nothing, AbstractMatrix} = nothing,
     dP::Union{Nothing, AbstractMatrix} = nothing,
-) where {verbosity}
+) where {S}
     return igrf(
         date,
         r,
@@ -282,7 +269,6 @@ function igrf(
         Val(:geocentric);
         max_degree = max_degree,
         show_warnings = show_warnings,
-        verbose = Val(verbosity),
         P = P,
         dP = dP,
     )
@@ -295,11 +281,10 @@ function igrf(
     Ω::T3,
     ::Val{:geocentric};
     max_degree::Int = _IGRF_MAX_DEGREE,
-    show_warnings::Bool = true,
-    verbose::Val{verbosity} = Val(true),
+    show_warnings::Val{S} = Val(true),
     P::Union{Nothing, AbstractMatrix} = nothing,
     dP::Union{Nothing, AbstractMatrix} = nothing,
-) where {T1 <: Number, T2 <: Number, T3 <: Number, verbosity}
+) where {T1 <: Number, T2 <: Number, T3 <: Number, S}
     T = promote_type(T1, T2, T3) |> float
 
     # == Input Verification ================================================================
@@ -325,10 +310,10 @@ function igrf(
 
     # Warn the user that for dates after the year `_IGRF_RELIABLE_YEAR` the accuracy may be
     # reduced.
-    if show_warnings && (date > _IGRF_RELIABLE_YEAR)
-        verbosity && @warn(
-            "The magnetic field computed with this IGRF version may be of reduced accuracy for years greater than $_IGRF_RELIABLE_YEAR."
-        )
+    # Since `S` is a compile-time constant, the code inside this branch is removed when
+    # `show_warnings` is `Val(false)`, allowing allocation-free calls.
+    if S && (date > _IGRF_RELIABLE_YEAR)
+        @warn "The magnetic field computed with this IGRF version may be of reduced accuracy for years greater than $_IGRF_RELIABLE_YEAR."
     end
 
     # If the `max_degree` is equal or lower than 0, we must clamp it to 1.
@@ -435,11 +420,10 @@ function igrf(
     Ω::Number,
     ::Val{:geodetic};
     max_degree::Int = _IGRF_MAX_DEGREE,
-    show_warnings::Bool = true,
-    verbose::Val{verbosity} = Val(true),
+    show_warnings::Val{S} = Val(true),
     P::Union{Nothing, AbstractMatrix} = nothing,
     dP::Union{Nothing, AbstractMatrix} = nothing,
-) where {verbosity}
+) where {S}
 
     # TODO: This method has a small error (≈ 0.01 nT) compared with the `igrf12syn`.
     # However, the result is exactly the same as the MATLAB function in [3]. Hence, this
@@ -472,7 +456,6 @@ function igrf(
         Val(:geocentric);
         max_degree = max_degree,
         show_warnings = show_warnings,
-        verbose = Val(verbosity),
         P = P,
         dP = dP,
     )

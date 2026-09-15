@@ -11,7 +11,7 @@
     Ω    = -1.34
 
     function loss_sum(x)
-        B = igrf(x[1], x[2], x[3], x[4], Val(:geocentric); show_warnings = false)
+        B = igrf(x[1], x[2], x[3], x[4], Val(:geocentric); show_warnings = Val(false))
         return sum(B)
     end
 
@@ -21,7 +21,7 @@
     @test g_zyg ≈ g_fwd
 
     function loss_norm2(x)
-        B = igrf(x[1], x[2], x[3], x[4], Val(:geocentric); show_warnings = false)
+        B = igrf(x[1], x[2], x[3], x[4], Val(:geocentric); show_warnings = Val(false))
         return B[1]^2 + B[2]^2 + B[3]^2
     end
 
@@ -39,7 +39,13 @@ end
 
     function loss_reduced(x)
         B = igrf(
-            x[1], x[2], x[3], x[4], Val(:geocentric); max_degree = 4, show_warnings = false
+            x[1],
+            x[2],
+            x[3],
+            x[4],
+            Val(:geocentric);
+            max_degree = 4,
+            show_warnings = Val(false),
         )
         return sum(B)
     end
@@ -59,7 +65,7 @@ end
 
     for (date, r, λ, Ω) in test_cases
         function loss(x)
-            B = igrf(x[1], x[2], x[3], x[4], Val(:geocentric); show_warnings = false)
+            B = igrf(x[1], x[2], x[3], x[4], Val(:geocentric); show_warnings = Val(false))
             return sum(B)
         end
 
@@ -69,4 +75,18 @@ end
 
         @test g_zyg ≈ g_fwd
     end
+end
+
+@testset "Zygote IGRF Geocentric Warnings" begin
+    msg = "The magnetic field computed with this IGRF version may be of reduced accuracy for years greater than 2030."
+
+    loss(x) = sum(igrf(x[1], x[2], x[3], x[4], Val(:geocentric)))
+    loss_quiet(x) =
+        sum(igrf(x[1], x[2], x[3], x[4], Val(:geocentric); show_warnings = Val(false)))
+
+    # The extension must keep the same default as `igrf`.
+    @test_logs (:warn, msg) match_mode = :any Zygote.gradient(
+        loss, [2031.0, 6800e3, 0.45, -1.34]
+    )
+    @test_nowarn Zygote.gradient(loss_quiet, [2031.0, 6800e3, 0.45, -1.34])
 end

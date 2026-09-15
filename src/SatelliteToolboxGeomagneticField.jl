@@ -38,6 +38,7 @@ include("./igrf/igrf.jl")
             igrf(date, 6500e3, 0.5, 0.5)
             igrf(date, 400e3, 0.5, 0.5, Val(:geodetic))
             igrf(date, 6500e3, 0.5, 0.5; P = P, dP = dP)
+            igrf(date, 6500e3, 0.5, 0.5; P = P, dP = dP, show_warnings = Val(false))
             igrfd(date, 6500e3, 30.0, 30.0)
             igrfd(date, 400e3, 30.0, 30.0, Val(:geodetic))
         end
