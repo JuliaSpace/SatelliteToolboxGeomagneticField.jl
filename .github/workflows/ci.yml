@@ -40,6 +40,11 @@ jobs:
       - uses: julia-actions/cache@v3
       - uses: julia-actions/julia-buildpkg@v1
       - uses: julia-actions/julia-runtest@v1
+        with:
+          # The allocation checks require the `@inbounds` annotations to be honored, which
+          # is Julia's default. `yes` (the action's default) forces bounds checking and
+          # makes the stack-allocated `MVector`s of the IGRF kernel escape to the heap.
+          check_bounds: 'auto'
       - uses: julia-actions/julia-processcoverage@v1
       - uses: codecov/codecov-action@v7
         with:
