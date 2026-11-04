@@ -2,8 +2,8 @@ name = "SatelliteToolboxGeomagneticField"
 uuid = "9fc549ba-b5d7-49a2-b268-8171e5fb6e89"
 license = "MIT"
 desc = "Models to compute the geomagnetic field."
-authors = ["Ronan Arraes Jardim Chagas <ronisbr@gmail.com>"]
 version = "2.0.0"
+authors = ["Ronan Arraes Jardim Chagas <ronisbr@gmail.com>"]
 
 [deps]
 LinearAlgebra = "37e2e46d-f89d-539d-b4ee-838fcccc9c8e"
@@ -26,7 +26,7 @@ AllocCheck = "0.2"
 Aqua = "0.8"
 DelimitedFiles = "1.9"
 ForwardDiff = "1"
-JET = "0.9, 0.10, 0.11, 0.12"
+JET = "0.9, 0.10, 0.11, 0.12, 0.13"
 LinearAlgebra = "1"
 PrecompileTools = "1"
 ReferenceFrameRotations = "3"
